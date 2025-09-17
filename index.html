@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>確認テスト 後半（解説付き・修正表示）</title>
+<title>模擬テスト_シャッフル（解説付き・修正表示）</title>
 <style>
  body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; line-height:1.6; margin:0; background:#f7f8fb;}
  header{background:white; position:sticky; top:0; z-index:10; border-bottom:1px solid #e6e8ef;}
@@ -33,7 +33,7 @@
 <body>
 <header>
   <div class="wrap">
-    <h1>確認テスト（後半）<span class="badge">自動採点・修正表示</span></h1>
+    <h1>模擬テスト_シャッフル<span class="badge">自動採点・修正表示</span></h1>
     <div class="footer">誤っている箇所に<del>取り消し線</del>、その隣に<span class="ins">赤文字の正しい表現</span>を表示します。</div>
   </div>
 </header>
@@ -423,7 +423,7 @@ const DATA = [
         "text": "職員各人の業績評価方法は、遂行した業務内容についての評価 （絶対評価）ではなく、他人との比較（相対評価）で行う。",
         "correct": true,
         "explanation": "",
-        "explanation_html": "<div class='diffline'>職員各人の業績評価方法は、<del>遂行した業務内容についての評価 （絶対評価）ではなく、他人との比較（相対評価）で行う。</del><span class='ins'>他人との比較（相対評価）ではなく、遂行した業務内容についての評価 （絶対評価）で行う。</span>に印字することにより被評価者へ伝達する。</div><div class='correctline'>正しい文： <span class='insline'>職員各人の業績評価方法は、他人との比較（相対評価）ではなく、遂行した業務内容についての評価 （絶対評価）で行う。</span></div>"
+        "explanation_html": "<div class='diffline'>職員各人の業績評価方法は、<del>遂行した業務内容についての評価 （絶対評価）ではなく、他人との比較（相対評価）で行う。</del><span class='ins'>他人との比較（相対評価）ではなく、遂行した業務内容についての評価 （絶対評価）で行う。</span></div><div class='correctline'>正しい文： <span class='insline'>職員各人の業績評価方法は、他人との比較（相対評価）ではなく、遂行した業務内容についての評価 （絶対評価）で行う。</span></div>"
       }
     ]
   },
@@ -875,7 +875,7 @@ const DATA = [
         "text": "BSC とは、戦略目標を「顧客」、「内部プロセス」、「学習と成長」の 3つの視点に分類し、それぞれについて評価指標を決定するものである。",
         "correct": true,
         "explanation": "",
-        "explanation_html": "<div class='diffline'> BSC とは、戦略目標を<span class='ins'>「財務」</span>「顧客」、「内部プロセス」、「学習と成長」の <del> 3つ</del><span class='ins'>4つ</span>の視点に分類し、それぞれについて評価指標を決定するものである。</div><div class='correctline'>正しい文： <span class='insline'> BSC とは、戦略目標を「財務」、「顧客」、「内部プロセス」、「学習と成長」の 4つの視点に分類し、それぞれについて評価指標を決定するものである。</span></div>"
+        "explanation_html": "<div class='diffline'> BSC とは、戦略目標を<span class='ins'>「財務」、</span>「顧客」、「内部プロセス」、「学習と成長」の <del> 3つ</del><span class='ins'>4つ</span>の視点に分類し、それぞれについて評価指標を決定するものである。</div><div class='correctline'>正しい文： <span class='insline'> BSC とは、戦略目標を「財務」、「顧客」、「内部プロセス」、「学習と成長」の 4つの視点に分類し、それぞれについて評価指標を決定するものである。</span></div>"
       },
       {
         "label": "3",
@@ -2020,12 +2020,7 @@ const DATA = [
   },
   {
     "id": 47,
-    "title": "<p>第47問 磁気共鳴コンピューター断層撮影（MRI撮影）について、正しい組み合わせを1つ選びなさい。\n\n<br>
-　　　　　　　　　1　3テスラ以上の機器による場合\n　<br>
-　　　　　　　　　　　　　　イ　共同利用施設において行われる場合【ア】点\n　<br>
-　　　　　　　　　　　　　　　　その他の場合【イ】点\n\n<br>
-　　　　　　　　　2　1.5テスラ以上3テスラ未満の機器による場合【ウ】点\n\n<br>
-　　　　　　　　　3　「1」又は「2」以外の場合【エ】点</p>",
+    "title": "第47問 磁気共鳴コンピューター断層撮影（MRI撮影）について、正しい組み合わせを1つ選びなさい。\n\n1　3テスラ以上の機器による場合\n　　　　　　イ　共同利用施設において行われる場合【ア】点\n　　　　　　ロ　その他の場合【イ】点\n2　1.5テスラ以上3テスラ未満の機器による場合【ウ】点\n3　「1」又は「2」以外の場合【エ】点",
     "instruction": "",
     "type": "select-incorrect",
     "options": [
@@ -2197,38 +2192,72 @@ const DATA = [
   }
 ];
 
+
+// 配列をシャッフルする関数（Fisher–Yates法）
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+// 各問題の選択肢をシャッフル
+DATA.forEach(q => {
+  q.options = shuffle(q.options);
+});
+ 
 function render() {
   const app = document.getElementById('app');
   app.innerHTML = "";
+
   DATA.forEach(q => {
     const card = document.createElement('section');
     card.className = 'card';
+
+    // ────────────── 問題文（title） ──────────────
     const h = document.createElement('div');
     h.className = 'title';
-    h.textContent = (q.title || '').replace(/\s+/g,' ');
+    // ▼ textContent → innerHTML に変更し \n を <br> に変換
+    h.innerHTML = (q.title || '').replace(/\n/g,'<br>');
+    card.appendChild(h);
+
     const instr = document.createElement('div');
     instr.className = 'instruction';
-    instr.textContent = q.instruction || (q.type==='select-incorrect' ? '誤っている選択肢をすべて選んでください。' : '正しい選択肢をすべて選んでください。');
-    card.appendChild(h);
+    instr.textContent = q.instruction || 
+      (q.type==='select-incorrect' 
+        ? '誤っている選択肢をすべて選んでください。'
+        : '正しい選択肢をすべて選んでください。'
+      );
     card.appendChild(instr);
+
+    // ────────────── 選択肢 ──────────────
     const form = document.createElement('div');
     q.options.forEach((o, i) => {
       const opt = document.createElement('label');
       opt.className = 'opt';
       const cb = document.createElement('input');
       cb.type = 'checkbox';
-      cb.name = `q_{q.id}`;
+      cb.name = `q_${q.id}`;
       cb.value = i;
+
       const span = document.createElement('div');
-      const safeText = (o.text || '').replace(/</g,'&lt;');
+      // ▼ \n を <br> に変換して改行表示
+      const safeText = (o.text || '')
+        .replace(/</g,'&lt;')
+        .replace(/\n/g,'<br>');
       span.innerHTML = `<strong>${o.label}.</strong> ${safeText}`;
+
       opt.appendChild(cb);
       opt.appendChild(span);
       form.appendChild(opt);
     });
     card.appendChild(form);
+
+    // ────────────── 採点ボタン ──────────────
     const controls = document.createElement('div');
     controls.className = 'controls';
+
     const btn = document.createElement('button');
     btn.textContent = '採点';
     btn.onclick = () => {
@@ -2238,48 +2267,58 @@ function render() {
         const selected = cb.checked;
         const isCorrect = !!o.correct;
         labels[idx].classList.remove('correct','incorrect','sel');
-        if(selected){
-          labels[idx].classList.add(isCorrect ? 'correct':'incorrect','sel');
+        if (selected) {
+          labels[idx].classList.add(isCorrect ? 'correct' : 'incorrect', 'sel');
         }
         let exp = labels[idx].querySelector('.explain');
-        if(!exp && (isCorrect || selected) && (o.explanation_html || o.explanation)){
+        if (!exp && (isCorrect || selected) && (o.explanation_html || o.explanation)) {
           exp = document.createElement('div');
           exp.className = 'explain';
-          if(o.explanation_html){
+          if (o.explanation_html) {
             exp.innerHTML = o.explanation_html;
-          }else{
+          } else {
             exp.textContent = o.explanation;
           }
           labels[idx].appendChild(exp);
         }
       });
-      const exact = q.options.every((o, idx)=>{
+      const exact = q.options.every((o, idx) => {
         const selected = form.querySelector(`input[value="${idx}"]`).checked;
         return (!!o.correct) === selected;
       });
-      const scoreArea = card.querySelector('.score') || (()=>{const s=document.createElement('div'); s.className='score'; card.appendChild(s); return s;})();
+      const scoreArea = card.querySelector('.score') 
+        || (() => {
+            const s = document.createElement('div');
+            s.className = 'score';
+            card.appendChild(s);
+            return s;
+          })();
       scoreArea.textContent = exact ? '✅ 正解！' : '❌ 不正解';
     };
+
     const btnReset = document.createElement('button');
     btnReset.textContent = 'リセット';
     btnReset.className = 'secondary';
     btnReset.onclick = () => {
-      form.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.checked=false);
-      form.querySelectorAll('.opt').forEach(o=>o.classList.remove('correct','incorrect','sel'));
-      form.querySelectorAll('.explain').forEach(e=>e.remove());
-      const s = card.querySelector('.score'); if(s) s.remove();
+      form.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+      form.querySelectorAll('.opt').forEach(o => o.classList.remove('correct','incorrect','sel'));
+      form.querySelectorAll('.explain').forEach(e => e.remove());
+      const s = card.querySelector('.score'); if (s) s.remove();
     };
+
     controls.appendChild(btn);
     controls.appendChild(btnReset);
     card.appendChild(controls);
     app.appendChild(card);
   });
+
   const note = document.createElement('div');
   note.className = 'footer';
   note.innerHTML = '※ 自動抽出の都合で一部の肢が欠落・誤判定する可能性があります。原資料に照らして随時修正してください。';
   app.appendChild(note);
 }
 render();
+
 </script>
 </body>
 </html>
