@@ -2206,7 +2206,7 @@ function shuffle(array) {
 DATA.forEach(q => {
   q.options = shuffle(q.options);
 });
- 
+
 function render() {
   const app = document.getElementById('app');
   app.innerHTML = "";
@@ -2218,7 +2218,6 @@ function render() {
     // ────────────── 問題文（title） ──────────────
     const h = document.createElement('div');
     h.className = 'title';
-    // ▼ textContent → innerHTML に変更し \n を <br> に変換
     h.innerHTML = (q.title || '').replace(/\n/g,'<br>');
     card.appendChild(h);
 
@@ -2231,7 +2230,7 @@ function render() {
       );
     card.appendChild(instr);
 
-    // ────────────── 選択肢 ──────────────
+    // ────────────── 選択肢（数字なし） ──────────────
     const form = document.createElement('div');
     q.options.forEach((o, i) => {
       const opt = document.createElement('label');
@@ -2242,11 +2241,11 @@ function render() {
       cb.value = i;
 
       const span = document.createElement('div');
-      // ▼ \n を <br> に変換して改行表示
       const safeText = (o.text || '')
         .replace(/</g,'&lt;')
         .replace(/\n/g,'<br>');
-      span.innerHTML = `<strong>${o.label}.</strong> ${safeText}`;
+      // ▼ 先頭の数字ラベルを削除
+      span.innerHTML = `${safeText}`;
 
       opt.appendChild(cb);
       opt.appendChild(span);
@@ -2318,6 +2317,7 @@ function render() {
   app.appendChild(note);
 }
 render();
+
 
 </script>
 </body>
