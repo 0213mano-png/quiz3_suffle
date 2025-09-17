@@ -1,0 +1,2285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>確認テスト 後半（解説付き・修正表示）</title>
+<style>
+ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; line-height:1.6; margin:0; background:#f7f8fb;}
+ header{background:white; position:sticky; top:0; z-index:10; border-bottom:1px solid #e6e8ef;}
+ .wrap{max-width:980px; margin:0 auto; padding:20px;}
+ h1{font-size:22px; margin:8px 0;}
+ .card{background:white; border:1px solid #e6e8ef; border-radius:16px; padding:20px; box-shadow:0 1px 4px rgba(0,0,0,.04); margin:16px 0;}
+ .title{font-weight:700; margin-bottom:8px; white-space: pre-wrap;}
+ .instruction{color:#444; margin-bottom:12px;}
+ .opt{display:flex; gap:10px; align-items:flex-start; padding:8px 10px; border:1px solid #e6e8ef; border-radius:12px; margin:8px 0; background:#fafbff;}
+ .opt input{margin-top:4px;}
+ .opt.correct.sel{border-color:#22c55e; background:#f0fff4;}
+ .opt.incorrect.sel{border-color:#ef4444; background:#fff1f2;}
+ .explain{font-size:14px; color:#334155; border-left:3px solid #cbd5e1; padding-left:10px; margin-top:6px;}
+ .controls{display:flex; gap:12px; flex-wrap:wrap; margin-top:8px;}
+ button{padding:10px 14px; border-radius:12px; border:1px solid #cbd5e1; background:#111827; color:white; cursor:pointer;}
+ button.secondary{background:white; color:#111827;}
+ .score{font-weight:700;}
+ .footer{color:#6b7280; font-size:13px; margin-top:24px;}
+ .badge{display:inline-block; font-size:12px; padding:4px 8px; border-radius:999px; background:#eef2ff; color:#3730a3; margin-left:8px;}
+ del{color:#6b7280; text-decoration-color:#ef4444; text-decoration-thickness:2px;}
+ .ins{color:#ef4444; font-weight:600;}
+ .insline{color:#ef4444; font-weight:600;}
+ .diffline{margin:4px 0;}
+ .correctline{margin-top:4px; color:#1f2937;}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>確認テスト（後半）<span class="badge">自動採点・修正表示</span></h1>
+    <div class="footer">誤っている箇所に<del>取り消し線</del>、その隣に<span class="ins">赤文字の正しい表現</span>を表示します。</div>
+  </div>
+</header>
+<main class="wrap" id="app"></main>
+<script>
+const DATA = [
+  {
+    "id": 1,
+    "title": "第1問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "独立行政法人国立病院機構法（平成１４年法律第１９１号）に基づく、特定独立行政法人として、 平成１６年４月１日に設立され、全国１４０の病院（令和６年４月１日現在）を一つの法人として運営している。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "地域における医療に一層貢献するために、都道府県が策定する医療計画を踏まえ、「がん、精神疾患、脳卒中、急性心筋梗塞、糖尿病」の5疾病および救急医療、災害医療、へき地の医療、周産期医療、小児医療（小児救急を含む）、地域医療の6事業を中心に、地域連携クリティカルパスを始め地域の医療機関との連携強化を図っている。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>地域における医療に一層貢献するために、都道府県が策定する医療計画を踏まえ、「がん、精神疾患、脳卒中、急性心筋梗塞、糖尿病」の5疾病および救急医療、災害医療、へき地の医療、周産期医療、小児医療（小児救急を含む）、<del>地域</del><span class='ins'>新興感染症発生・まん延時における</span>医療の6事業を中心に、地域連携クリティカルパスを始め地域の医療機関との連携強化を図っている。</div><div class='correctline'>正しい文： <span class='insline'>地域における医療に一層貢献するために、都道府県が策定する医療計画を踏まえ、「がん、精神疾患、脳卒中、急性心筋梗塞、糖尿病」の5疾病および救急医療、災害医療、へき地の医療、周産期医療、小児医療（小児救急を含む）、新興感染症発生・まん延時における医療の6事業を中心に、地域連携クリティカルパスを始め地域の医療機関との連携強化を図っている。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "重症心身障害、筋ジス・神経難病、精神、結核・呼吸器、エイズなど民間では体制の整備、経験、または不採算とされることからアプローチが困難な分野についても、患者・家族が安心して治療・療養ができるよう、各地域の国立病院機構がセーフティネットとして支えている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "令和７年４月１日に国立感染症研究所と国立研究開発法人国立国際医療研究センターを統合した国立健康危機管理研究機構が設立され、英語名を「Japan Institute for Health Security」、略称はJIHS（ジース）とされた。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "5法人はそれぞれ悪性新生物、精神・神経疾患、感染症、成育に係る疾患、加齢に係る疾患の調査、研究及び技術の開発、これらの業務に密接に関連する医療の提供、技術者の研修、医療政策の提言等の業務を行っている。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>5法人はそれぞれ悪性新生物、精神・神経疾患、<del>感染症</del><span class='ins'>循環器病</span>、成育に係る疾患、加齢に係る疾患の調査、研究及び技術の開発、これらの業務に密接に関連する医療の提供、技術者の研修、医療政策の提言等の業務を行っている。</div><div class='correctline'>正しい文： <span class='insline'>5法人はそれぞれ悪性新生物、精神・神経疾患、循環器病、成育に係る疾患、加齢に係る疾患の調査、研究及び技術の開発、これらの業務に密接に関連する医療の提供、技術者の研修、医療政策の提言等の業務を行っている。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "第2問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "国立健康危機管理研究機構設立に伴い、令和7年3月31日をもって国立国際医療研究センターは解散した。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "平成 ２２年４月１日に国立高度専門医療センターの６つの組織は非特定独立行政法人に移行し、総称を「国立高度専門医療研究センター」とし、各センターはそれぞれ独立した法人に移行（１センター１法人と）し、職員の身分も公務員型となった。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>平成 ２２年４月１日に国立高度専門医療センターの６つの組織は非特定独立行政法人に移行し、総称を「国立高度専門医療研究センター」とし、各センターはそれぞれ独立した法人に移行（１センター１法人と）し、職員の身分も<del>公務員型 </del><span class='ins'>非公務員型</span>となった。 </div><div class='correctline'>正しい文： <span class='insline'> 平成 ２２年４月１日に国立高度専門医療センターの６つの組織は非特定独立行政法人に移行し、総称を「国立高度専門医療研究センター」とし、各センターはそれぞれ独立した法人に移行（１センター１法人と）し、職員の身分も非公務員型となった。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "第一期中期目標期間、第二期中期目標期間ともに、「独法化のねらいや期待に応え、医療・経営の両面において中期目標の水準に対し、大きな成果を上げている」と評価を受けた。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "国立ハンセン病療養所は、２００９年４月の「ハンセン病問題の解決の促進に関する法律」施行の趣旨を踏まえ、入所者の療養の質の向上を図り、入所者が地域社会と共生しつつ、良好かつ平穏な療養生活を営むことができることを目的とする厚生労働省所管の施設等機関である。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "高度成長期における国立療養所では、児童福祉対策の拡充に伴い、慢性心疾患及び、先天性代謝異常の受け入れ等各種特殊疾病対策を推進した。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>高度成長期における国立療養所では、児童福祉対策の拡充に伴い、<del>慢性心疾患及び、先天性代謝異常</del><span class='ins'>重度心身障害児（者）及び、進行性筋萎縮症児（者）</span>の受け入れ等各種特殊疾病対策を推進した。 </div><div class='correctline'>正しい文： <span class='insline'> 高度成長期における国立療養所では、児童福祉対策の拡充に伴い、重度心身障害児（者）及び、進行性筋萎縮症児（者）の受け入れ等各種特殊疾病対策を推進した。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "第3問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "任命権者は、試用期間中の職員について勤務実績の不良なこと、心身に故障があること その他の事実に基づいて国立病院機構に引き続き勤務させておくことが適当でないと認める場合には、当該職員を何時でも降任させ、又は解雇することができる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "試用期間の開始後６月間において実際に勤務した日数が 90日に満たない職員については、その日数が 60日に達するまで試用期間は引き続くが、試用期間は、当該試用期間の開始後１年を超えないものとする。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>試用期間の開始後６月間において実際に勤務した日数が 90日に満たない職員については、その日数が<del>60日</del><span class='ins'>9０日</span>に達するまで試用期間は引き続くが、試用期間は、当該試用期間の開始後１年を超えないものとする。</div><div class='correctline'>正しい文： <span class='insline'> 試用期間の開始後６月間において実際に勤務した日数が 90日に満たない職員については、その日数が 9０日に達するまで試用期間は引き続くが、試用期間は、当該試用期間の開始後１年を超えないものとする。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "「降任」とは、任命権者が職員をその職員が現に就いている職務より下位の職制上の段階に属する職務に就かせることをいい、職員から書面による同意を得た場合のみ降任させることができる。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>「降任」とは、任命権者が職員をその職員が現に就いている職務より下位の職制上の段階に属する職務に就かせることをいい、職員から書面による同意を得た場合<del>のみ</del><span class='ins'>も</span>降任させることができる。</div><div class='correctline'>正しい文： <span class='insline'> 「降任」とは、任命権者が職員をその職員が現に就いている職務より下位の職制上の段階に属する職務に就かせることをいい、職員から書面による同意を得た場合も降任させることができる。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "「昇任」とは、任命権者が職員をその職員が現に就いている職務より上位の職制上の段階に属する職務に就かせることをいう。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "任命権者は、職員を採用する場合には、競争試験及び選考により採用するものとする。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "第4問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "「転任」とは、職員をその職員が現に就いている職務と任命権者を同じくする他の職員の職務に就かせることであって、昇任、降任に該当しないものをいう。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>「転任」とは、職員をその職員が現に就いている職務と任命権者を<del>同じくする</del><span class='ins'>異にする</span>他の職員の職務に就かせることであって、昇任、降任に該当しないものをいう。</div><div class='correctline'>正しい文： <span class='insline'> 「転任」とは、職員をその職員が現に就いている職務と任命権者を異にする他の職員の職務に就かせることであって、昇任、降任に該当しないものをいう。</span></div>"
+      },
+      {
+        "label": "2",
+        "text": "「配置換」とは、職員をその職員が現に就いている職務と任命権者を異にする他の職員の職務に就かせることであって、昇任、降任に該当しないものをいう。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>「配置換」とは、職員をその職員が現に就いている職務と任命権者を<del>異にする</del><span class='ins'>同じくする</span>他の職員の職務に就かせることであって、昇任、降任に該当しないものをいう。</div><div class='correctline'>正しい文： <span class='insline'> 「配置換」とは、職員をその職員が現に就いている職務と任命権者を同じくする他の職員の職務に就かせることであって、昇任、降任に該当しないものをいう。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "休職は、本人の意にかかわりなく一方的になされるものであり、職員にとって不利益な処分となる場合が多いため、長期の病気休暇の場合や刑事事件に関し起訴された場合など一定の理由の場合だけに限定して、職員の身分保障を期している。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "心身の故障のため長期休養を要する場合、 3 年を超えない範囲で休職することができる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "「解雇」とは、職員をその意に反して退職させることをいい、解雇される理由として、心身の故障のため、職務の遂行に支障があり、又はこれに堪えない場合や禁錮以上の刑に処せられ、その執行を終わるまで又は執行を受けることがなくなるまでの者等が該当する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "第5問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "定年は、医師及び歯科医師は年齢６５年、医師以外の副院長は年齢６３年、それ以外の職員は年齢６０年とする。なお、医師及び歯科医師を除く常勤職員であって、令和８年度に６０歳の定年年齢に達する職員から、段階的に定年年齢の引上げを行うこととなっている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "再雇用制度とは定年に達した職員を、定年退職日の翌日から起算して１年を超えない範囲内で期限を定め、その職員を引き続いて勤務させることができる制度である。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'><del>再雇用制度</del><span class='ins'>勤務延長制度</span>とは定年に達した職員を、定年退職日の翌日から起算して１年を超えない範囲内で期限を定め、その職員を引き続いて勤務させることができる制度である。</div><div class='correctline'>正しい文： <span class='insline'> 勤務延長制度とは定年に達した職員を、定年退職日の翌日から起算して１年を超えない範囲内で期限を定め、その職員を引き続いて勤務させることができる制度である。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "勤務延長制度とは定年退職者等を、従前の勤務実績等に基づく選考により、１年を超えない範囲内で任期を定め、職務に就かせる制度である。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'><del>勤務延長制度</del><span class='ins'>再雇用制度</span>とは定年退職者等を、従前の勤務実績等に基づく選考により、１年を超えない範囲内で任期を定め、職務に就かせる制度である。</div><div class='correctline'>正しい文： <span class='insline'> 再雇用制度とは定年退職者等を、従前の勤務実績等に基づく選考により、１年を超えない範囲内で任期を定め、職務に就かせる制度である。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "非常勤職員とは１週間あたりの勤務時間が３２時間を超えない範囲内で、かつ、一事業年度を超えない任期を定めて採用する者をいう。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "国立病院機構における雇用期間（任期）を定めて採用された期間を通算した期間が3年を超える期間職員又は非常勤職員（有期雇用職員としての採用回数が２回以上である者に限る。）が、雇用期間（任期）の 満了する日の３０日前までに雇用期間（任期）の定めのない採用への転換を申し出たときは、当該雇用期間（任期）の満了する日の翌日から雇用期間（任期）の定めのない採用となる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "第6問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "諭旨退職は１０日以内の期間を定めて辞職願の提出を勧告し、即時に辞職を求めるものであり、退職手当の全部又は一部を支給しないことがある。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "懲戒処分は、理事長が行う。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>懲戒処分は、<del>理事長</del><span class='ins'>任命権者</span>が行う。</div><div class='correctline'>正しい文： <span class='insline'> 懲戒処分は、任命権者が行う。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "懲戒解雇は予告期間を設けず、即時解雇とする。ただし、この場合、解雇の事由について厚生労働省の認定を受けなければならない。懲戒解雇された者には、退職手当を支給しない。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>懲戒解雇は予告期間を設けず、即時解雇とする。ただし、この場合、解雇の事由について<del>厚生労働省</del><span class='ins'>労働基準監督署長</span>の認定を受けなければならない。懲戒解雇された者には、退職手当を支給しない。</div><div class='correctline'>正しい文： <span class='insline'> 懲戒解雇は予告期間を設けず、即時解雇とする。ただし、この場合、解雇の事由について労働基準監督署長の認定を受けなければならない。懲戒解雇された者には、退職手当を支給しない。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "停職とは停職者の職員としての身分を保有するが、その職務に従事できず、停職期間は１日以上3月以下とする。また、停職の期間中は、給与が支給されない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "減給は１回の減給処分の額が平均給与の１日分の半額を超えない額を減給する。 ただし、減給処分に該当する事案が一給与期間に２回以上ある場合で、当該減給の総額が一給与期間における給与の総額の１０分の１を超える場合は１０分の１以内の額を減給し、その超える減給の額は翌給与期間以降に減ずる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "第7問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "職務として利害関係者を訪問した際に、当該関係者から提供される物品を使用することはできる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "利害関係者から又は利害関係者の負担により、無償での役務の提供を受けることは禁止されている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "利害関係者と共に旅行（職務のための旅行を除く。）をすることは禁止されている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "職務として出席した会議その他の会合において、利害関係者から茶菓の提供を受けることは禁止されている。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>職務として出席した会議その他の会合において、利害関係者から茶菓の提供を受けることは<del>禁止されている。</del><span class='ins'>できる。</span></div><div class='correctline'>正しい文： <span class='insline'> 職務として出席した会議その他の会合において、利害関係者から茶菓の提供を受けることはできる。</span></div>"
+      },
+      {
+        "label": "5",
+        "text": "利害関係者から3000円程度の供応接待を受けることができる。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>利害関係者から3000円程度の供応接待を受けることが<del>できる。</del><span class='ins'>できない。</span></div><div class='correctline'>正しい文： <span class='insline'> 利害関係者から3000円程度の供応接待を受けることができない。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "第8問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "独立行政法人国立病院機構ハラスメントの防止等に関する規程は、独立行政法人国立病院機構における人事の公正の確保、職員の利益の保護及び職員の能率を十分発揮できる勤務環境を確保することを目的としている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "不当な仲間はずれやいじめ、飲酒の強要や酔った上での迷惑行為、不正行為の強要、自分の支持する宗教や思想にしつこく関与を求めることなどもハラスメントに該当する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "パワー・ハラスメントとは、国立病院機構における職務上の地位や人間関係などの個人的な地位の優位性を背景に、嫌がらせなどの言動を繰り返すことを指し、「業務の適正な範囲を超えて」行われた「不適切で不当な」言動であるかどうかが重要となる。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>パワー・ハラスメントとは、国立病院機構における職務上の地位や人間関係などの<del>個人的な地位</del><span class='ins'>職場内</span>の優位性を背景に、嫌がらせなどの言動を繰り返すことを指し、「業務の適正な範囲を超えて」行われた「不適切で不当な」言動であるかどうかが重要となる。</div><div class='correctline'>正しい文： <span class='insline'> パワー・ハラスメントとは、国立病院機構における職務上の地位や人間関係などの職場内の優位性を背景に、嫌がらせなどの言動を繰り返すことを指し、「業務の適正な範囲を超えて」行われた「不適切で不当な」言動であるかどうかが重要となる。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "ハラスメントの相談等は、原則として面接によることとし、必要に応じて、電子メール、手紙、電話によるものも受け付けるものとする。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "セクシュアル・ハラスメントとは、行為者が意図して、他の者を不快にさせる性的な言動のことである。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>セクシュアル・ハラスメントとは、<del>行為者が意図して</del><span class='ins'>行為者の意図に関わらず</span>、他の者を不快にさせる性的な言動のことである。</div><div class='correctline'>正しい文： <span class='insline'> セクシュアル・ハラスメントとは、行為者の意図に関わらず、他の者を不快にさせる性的な言動のことである。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "第9問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "業績評価制度は、職員の業務遂行意欲の向上、業務の改善を図り、国立病院機構全体の発展を目指すことを目的としている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "評価結果は、賞与（業績手当）及び昇給に反映し、職員各人の業務の改善を図り、病院全体の運営改善に結びつける。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "職員各人の仕事の取組み状況を公正・客観的に評価するため、評価期間の開始前に評価項目及び評価の着眼点の明示を行う。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "評価結果については、前期又は後期の評価終了後の賞与（６月又は１２月）支給時に、賞与明細書に印字することにより被評価者へ伝達する。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>評価結果については、前期又は後期の評価終了後の賞与（６月又は１２月）支給時に、<del>賞与明細書</del><span class='ins'>給与支給明細書</span>に印字することにより被評価者へ伝達する。</div><div class='correctline'>正しい文： <span class='insline'>評価結果については、前期又は後期の評価終了後の賞与（６月又は１２月）支給時に、給与支給明細書に印字することにより被評価者へ伝達する。</span></div>"
+      },
+      {
+        "label": "5",
+        "text": "職員各人の業績評価方法は、遂行した業務内容についての評価 （絶対評価）ではなく、他人との比較（相対評価）で行う。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>職員各人の業績評価方法は、<del>遂行した業務内容についての評価 （絶対評価）ではなく、他人との比較（相対評価）で行う。</del><span class='ins'>他人との比較（相対評価）ではなく、遂行した業務内容についての評価 （絶対評価）で行う。</span>に印字することにより被評価者へ伝達する。</div><div class='correctline'>正しい文： <span class='insline'>職員各人の業績評価方法は、他人との比較（相対評価）ではなく、遂行した業務内容についての評価 （絶対評価）で行う。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "title": "第10問 業績評価ついて誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "各評価の配点はそれぞれ５０点満点とし、合算した点数を「ＡＡ」～「Ｄ」（最高「１００点」、 最低「２０点」、標準「６０点」）の５段階により区分する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "補助者を設置する場合は、評価期間が開始される前（９月中又は３月中）に行い、原則、評価期間中 に追加や変更を行うことはできない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "評価の種類は、「業務遂行能力評価」及び「業務実績評価」（設定目標に対する評価）とする。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "業務実績評価は、職員各人に必要な業務に対する姿勢及び能力を評価する。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del>業務実績評価は、</del><span class='ins'>業務遂行能力評価は、</span>職員各人に必要な業務に対する姿勢及び能力を評価する。</div><div class='correctline'>正しい文： <span class='insline'>業務遂行能力評価は、職員各人に必要な業務に対する姿勢及び能力を評価する。</span></div>"
+      },
+      {
+        "label": "5",
+        "text": "業務遂行能力評価は、評価者から説明される当年度の病院及び部門（組織）の目標を勘案しながら具体的な業務上の目標設定を行い、その目標の到達度を評価する。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del>業務遂行能力評価は、</del><span class='ins'>業務実績評価は、</span>評価者から説明される当年度の病院及び部門（組織）の目標を勘案しながら具体的な業務上の目標設定を行い、その目標の到達度を評価する。</div><div class='correctline'>正しい文： <span class='insline'>業務実績評価は、評価者から説明される当年度の病院及び部門（組織）の目標を勘案しながら具体的な業務上の目標設定を行い、その目標の到達度を評価する。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "title": "第11問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "休職等により勤務した期間が当該評価期間の1／６に相当する期間の日数に満たない場合は、評価の対象外とし標準（６０点）の評価結果とみなす。ただし、医師については、「試用期間」がある場合でも評価対象とする。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>職等により勤務した期間が当該評価期間の<del>1／６</del><span class='ins'>5／６</span>に相当する期間の日数に満たない場合は、評価の対象外とし標準（６０点）の評価結果とみなす。ただし、医師については、「試用期間」がある場合でも評価対象とする。</div><div class='correctline'>正しい文： <span class='insline'>休職等により勤務した期間が当該評価期間の5／６に相当する期間の日数に満たない場合は、評価の対象外とし標準（６０点）の評価結果とみなす。ただし、医師については、「試用期間」がある場合でも評価対象とする。</span></div>"
+      },
+      {
+        "label": "2",
+        "text": "評価者は、とりわけ勤務成績が良好でないと認められる事実が見られる場合は、評価者は評価期間中において繰返しの指導（概ね5回）を行い、被評価者に自覚を促すことが必要である。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>評価者は、とりわけ勤務成績が良好でないと認められる事実が見られる場合は、評価者は評価期間中において繰返しの指導（概ね<del>5回</del><span class='ins'>3回</span>）を行い、被評価者に自覚を促すことが必要である。</div><div class='correctline'>正しい文： <span class='insline'>評価者は、とりわけ勤務成績が良好でないと認められる事実が見られる場合は、評価者は評価期間中において繰返しの指導（概ね3回）を行い、被評価者に自覚を促すことが必要である。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "期間の定めのある契約は、両当事者（労働者と使用者）をその期間中拘束する性格のものであるため、特別な事情がない限り、契約当事者双方は一方的な理由だけでの解約はできない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "労働基準法では、賃金とは名称を問わず労働の対価として使用者が支払う全てのものをいい、使用者は、賃金を①通貨で、②全額を、③毎月 1 回以上、④一定の期日に、⑤直接労働者に支払わなければならない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "期間の定めのある契約は原則として 3 年を超えてはならない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "title": "第12問 労働条件の明示ついて必ず明示しなければならない事項として誤っている項目を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "労働契約の期間",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "期間の定めのある労働契約を更新する場合の基準",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del> </del><span class='ins'> </span></div><div class='correctline'>正しい文： <span class='insline'>必ず明示しなければならない事項</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "休職に関する事項",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "始業・終業の時刻、所定労働時間を超える労働（早出・残業等）の有無、休憩時間、休日、\n休暇、２交替制等に関する事項",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "退職手当の定めが適用される労働者の範囲、退職手当の決定、計算・支払いの方法及び支払い時期",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del> </del><span class='ins'> </span></div><div class='correctline'>正しい文： <span class='insline'>必ず明示しなければならない事項</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "title": "第13問　労働条件の明示ついて定めをした場合に明示しなければならない事項として誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "労働者に負担させる食費、作業用品などに関する事項",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "臨時に支払われる賃金、賞与等及び最低賃金額に関する事項",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "退職に関する事項（解雇の事由を含む。）",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del> </del><span class='ins'> </span></div><div class='correctline'>正しい文： <span class='insline'>定めをした場合に明示しなければならない事項</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "災害補償、業務外の傷病扶助に関する事項",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "期間の定めのある労働契約を更新する場合の基準",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del> </del><span class='ins'> </span></div><div class='correctline'>正しい文： <span class='insline'>定めをした場合に明示しなければならない事項</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "title": "第14問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "１か月以内の一定の期間を平均した労働時間数の一週間分が、４０時間（特例措置事業場は４４時間）以下の範囲内であれば、特定の日や週について１日及び１週間の法定労働時間を超えて働かせることができる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "労働基準法第３２条において、使用者は労働者に休憩時間を除いて１日に8時間、１週間に44時間を超えて労働させてはならない。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 労働基準法第３２条において、使用者は労働者に休憩時間を除いて１日に8時間、１週間に<del> 44時間</del><span class='ins'> 40時間</span>を超えて労働させてはならない。</div><div class='correctline'>正しい文： <span class='insline'>労働基準法第３２条において、使用者は労働者に休憩時間を除いて１日に8時間、１週間に40時間を超えて労働させてはならない。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "国立病院機構の休憩時間は労働時間が６時間を超える場合は少なくとも45分、８時間を超える場合は少なくとも１時間の休憩を与えなければならない。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del> 国立病院機構</del><span class='ins'> 使用者（労働基準法）</span>の休憩時間は労働時間が６時間を超える場合は少なくとも45分、８時間を超える場合は少なくとも１時間の休憩を与えなければならない。</div><div class='correctline'>正しい文： <span class='insline'>使用者（労働基準法）の休憩時間は労働時間が６時間を超える場合は少なくとも45分、８時間を超える場合は少なくとも１時間の休憩を与えなければならない。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "休憩時間は、①労働時間の途中で②一斉に与え、かつ③自由に利用させることが原則である。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "法定労働時間を超えて時間外労働（残業）や法定休日に労働させる場合は、労使協定（「３６（さぶろく）協定」）を締結し、所轄の労働基準監督署長に 届け出る必要がある。また、３６協定の延長時間（時間外労働に相当する時間）は ①１日、 ②１ヶ月、③１年間 の３つについて協定しなければならない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "title": "第15問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "６か月間継続勤務して全労働日の８割以上出勤した場合は、週 5 日働いている場合は１０日間の有給休暇を与えなければならない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "年次有給休暇は付与された日から 2 年で時効となる。付与された日から 1 年間で使い切れなかった年次有給休暇は翌年に繰り越し、新たに与えられた休暇日数に加算されるが、さらに 1 年間使わなかったときは時効により消滅する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "年次有給休暇は前日までに指定すれば、無条件で与えられるものであり、ただし、年次有給休暇の取得を認めることにより事業の正常な運営を妨げることになる場合は、別の日に取得するように求めることができる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "監視又は断続的労働に従事する者と宿日直勤務者については、理事長の許可を条件に労働時間等の規制を全部又は一部除外している。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 監視又は断続的労働に従事する者と宿日直勤務者については、<del>理事長</del><span class='ins'> 所轄労働基準監督署長</span>の許可を条件に労働時間等の規制を全部又は一部除外している。</div><div class='correctline'>正しい文： <span class='insline'>監視又は断続的労働に従事する者と宿日直勤務者については、所轄労働基準監督署長の許可を条件に労働時間等の規制を全部又は一部除外している。</span></div>"
+      },
+      {
+        "label": "5",
+        "text": "常時１０人以上の労働者を使用している事業場では就業規則を作成しなければならない。また、「常時１０人以上の労働者」には、パートタイム労働者等は含まれない。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 常時１０人以上の労働者を使用している事業場では就業規則を作成しなければならない。また、「常時１０人以上の労働者」には、<del>パートタイム労働者等は含まれない。</del><span class='ins'> パートタイム労働者等も含まれる。</span></div><div class='correctline'>正しい文： <span class='insline'>常時１０人以上の労働者を使用している事業場では就業規則を作成しなければならない。また、「常時１０人以上の労働者」には、パートタイム労働者等も含まれる。 </span></div>"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "title": "第16問 就業規則で必ず記載しなければならない事項（絶対的必要記載事項）について誤っている項目を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "賃金（臨時の賃金等を除く。）の決定、計算及び支払の方法、締切り及び支払 時期、昇給に関する事項",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "退職手当の定めをする場合には、適用される労働者の範囲、退職手当の決定、 計算及び支払の方法、退職手当の支払の時期に関する事項",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del></del><span class='ins'></span></div><div class='correctline'>正しい文： <span class='insline'>定めをした場合に明示しなければならない事項 </span></div>"
+      },
+      {
+        "label": "3",
+        "text": "臨時の賃金等（退職手当を除きます。）及び最低賃金額の定めをする場合には、これに関する事項",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del></del><span class='ins'></span></div><div class='correctline'>正しい文： <span class='insline'>定めをした場合に明示しなければならない事項 </span></div>"
+      },
+      {
+        "label": "4",
+        "text": "始業及び終業の時刻、休憩時間、休日、休暇、労働者を２組以上に分けて交替 で就業させる場合においては就業時転換に関する事項",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "退職（解雇の事由を含む。）に関する事項",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "title": "第17問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "賃金台帳は最後の記入をした日から、労働者名簿は退職日から５年間保存しなければならない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "賃金台帳の記載事項として、氏名、履歴、性別、住所、従事する業務の種類、雇入れ年月日などがある。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del>賃金台帳</del><span class='ins'>労働者名簿</span>の記載事項として、氏名、履歴、性別、住所、従事する業務の種類、雇入れ年月日などがある。</div><div class='correctline'>正しい文： <span class='insline'>労働者名簿の記載事項として、氏名、履歴、性別、住所、従事する業務の種類、雇入れ年月日などがある。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "労働者名簿の記載事項として、性別、労働日数、時間外、休日労働時間数及び深夜業の時間数、賃金控除の額などがある。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del>労働者名簿</del><span class='ins'>賃金台帳</span>の記載事項として、性別、労働日数、時間外、休日労働時間数及び深夜業の時間数、賃金控除の額などがある。</div><div class='correctline'>正しい文： <span class='insline'>賃金台帳の記載事項として、性別、労働日数、時間外、休日労働時間数及び深夜業の時間数、賃金控除の額などがある。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "賃金台帳と労働者名簿等は賃金台帳と労働者名簿等を合わせて作成しても構わない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "労働基準法の一部を改正する法律（令和２年法律第１３号）により、賃金台帳や労働者名簿等の記録の保存期間が３年から５年に延長された。 ただし、 経過措置として、当分の間はその期間が３年となる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "title": "第18問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "総括安全衛生管理者、安全管理者、衛生管理者及び産業医の選任は、その選任すべき事由が発生した日から１0 日以内に選任し、遅滞なく所轄の労働基準監督署へ報告する必要がある。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 総括安全衛生管理者、安全管理者、衛生管理者及び産業医の選任は、その選任すべき事由が発生した日から<del>１0 日</del><span class='ins'>１４日</span>以内に選任し、遅滞なく所轄の労働基準監督署へ報告する必要がある。</div><div class='correctline'>正しい文： <span class='insline'>総括安全衛生管理者、安全管理者、衛生管理者及び産業医の選任は、その選任すべき事由が発生した日から１４日以内に選任し、遅滞なく所轄の労働基準監督署へ報告する必要がある。</span></div>"
+      },
+      {
+        "label": "2",
+        "text": "安衛法では、労働災害を防止するための管理を必要とする一定の作業について、各事業場の作業内容、規模等に応じて、安全衛生推進者の選任を義務づけている。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 安衛法では、労働災害を防止するための管理を必要とする一定の作業について、各事業場の作業内容、規模等に応じて、<del>安全衛生推進者</del><span class='ins'>作業主任者</span>の選任を義務づけている。</div><div class='correctline'>正しい文： <span class='insline'>安衛法では、労働災害を防止するための管理を必要とする一定の作業について、各事業場の作業内容、規模等に応じて、作業主任者の選任を義務づけている。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "安衛法では、事業場を一つの適用単位として、各事業場の業種、規模等に応じて、安全委員会、衛生委員会の設置を義務づけている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "総括安全衛生管理者とは、安全管理者、衛生管理者を指揮させるとともに、労働者の危険または健康障害を防止するための措置等の 業務を統括管理させることとされており、常時１,０００人以上の労働者を使用するすべての事業場で選任することとされている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "安全管理者、衛生管理者の選任を要しない労働者数１０人から４９人の事業場には、安全衛生推進者などの選任を義務づけている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "title": "第19問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "総括安全衛生管理者の職務には、健康診断の実施その他健康の保持増進のための措置に関すること、並びに労働災害の原因の調査及び再発防止対策に関することが含まれる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "安全管理者とは、安全衛生業務のうち、安全に係る技術的事項を管理させることとされており、常時５０人以上の労働者を使用するすべての事業場で選任することとされている。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 安全管理者とは、安全衛生業務のうち、安全に係る技術的事項を管理させることとされており、<del> 常時５０人以上の労働者を使用するすべての事業場で選任することとされている。 </del><span class='ins'>安衛法上、機構病院においては、選任義務はない。</span></div><div class='correctline'>正しい文： <span class='insline'>安全管理者とは、安全衛生業務のうち、安全に係る技術的事項を管理させることとされており、安衛法上、機構病院においては、選任義務はない。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "衛生管理者とは、安全衛生業務のうち、衛生に係る技術的事項を管理させることとされており、安衛法上、機構病院においては、選任義務はない。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 衛生管理者とは、安全衛生業務のうち、衛生に係る技術的事項を管理させることとされており、<del> 安衛法上、機構病院においては、選任義務はない。 </del><span class='ins'>常時５０人以上の労働者を使用するすべての事業場で選任することとされている。</span></div><div class='correctline'>正しい文： <span class='insline'>衛生管理者とは、安全衛生業務のうち、衛生に係る技術的事項を管理させることとされており、常時５０人以上の労働者を使用するすべての事業場で選任することとされている。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "産業医とは、専門家として労働者の健康管理等に当たらせることとされており、常時５０人以上の労働者を使用するすべての事業場で選任することとされている。ただし、常時３，０００人を超える労働者を使用する事業場では、２人以上の産業医を選任することとされている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "作業主任者とは、労働災害を防止するための管理を必要とする一定の作業について、作業に従事する労働者を指揮させるとともに、労働者の危険または健康障害を防止するための措置等の業務を行わせることとなっている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "title": "第20問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "バランスト・スコアカード(BSC:Balanced Score Card)を活用することで、クロス SWOT分析によって導出された戦略目標を実行可能なアクションプランに落とし込むことが可能となる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "BSC とは、戦略目標を「顧客」、「内部プロセス」、「学習と成長」の 3つの視点に分類し、それぞれについて評価指標を決定するものである。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> BSC とは、戦略目標を<span class='ins'>「財務」</span>「顧客」、「内部プロセス」、「学習と成長」の <del> 3つ</del><span class='ins'>4つ</span>の視点に分類し、それぞれについて評価指標を決定するものである。</div><div class='correctline'>正しい文： <span class='insline'> BSC とは、戦略目標を「財務」、「顧客」、「内部プロセス」、「学習と成長」の 4つの視点に分類し、それぞれについて評価指標を決定するものである。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "BSC を作成する際はそれぞれの戦略目標について「重要成功因子」とそれに対する「成果指標」を設定し、成果指標達成のためのアクションプランを検討する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "成果指標や戦略目標の達成が懸念される場合は、アクションプランの見直しや戦略そのものの見直しも行う。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "BSC を作成する際には、戦略策定者がアクションプラン実行者となる場合が多いため、戦略策定者が BSC について理解する必要がある。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> BSC を作成する際には、戦略策定者がアクションプラン実行者となる場合が多いため、<del> 戦略策定者が BSC について理解する必要がある。</del><span class='ins'>アクションプラン実行者への丁寧な説明が必要である。</span></div><div class='correctline'>正しい文： <span class='insline'> BSC を作成する際には、戦略策定者がアクションプラン実行者となる場合が多いため、アクションプラン実行者への丁寧な説明が必要である。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "title": "第21問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "医業収支率は（医業収益÷医業費用）×１００で算出され、この比率が高いほど経営効率に優れ、経営状態が良いことを示している。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "経常収支率は（経常収益÷経常費用）×１００で算出され、この比率が高いほど経営効率に優れ、経営状態が良いことを示している。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "人件費率は（給与費÷医業収益）×１００で算出され、職種別人員、賃金ベース、平均年齢等からその適否を判断する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "委託費率は（委託費÷経常収益）×１００で算出される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 委託費率は（委託費÷<del> 経常収益</del><span class='ins'>医業収益</span>）×１００で算出される。</div><div class='correctline'>正しい文： <span class='insline'> 委託費率は（委託費÷医業収益）×１００で算出される。</span></div>"
+      },
+      {
+        "label": "5",
+        "text": "入院患者1人当たり医療費用は医業費用÷1日平均在院患者数で算出され、この指標が小さいほど費用を抑制して病院運営をしていることを表している。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 入院患者1人当たり医療費用は医業費用÷<del> 1日平均在院患者数</del><span class='ins'>延在院患者数</span>）で算出され、この指標が小さいほど費用を抑制して病院運営をしていることを表している。</div><div class='correctline'>正しい文： <span class='insline'> 入院患者1人当たり医療費用は医業費用÷延在院患者数で算出され、この指標が小さいほど費用を抑制して病院運営をしていることを表している。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "title": "第22問 次の文章の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "職員1人当たり医業収益は（医業収益÷年間平均職員数）で算出され、労働効率の良否を測る尺度として用いられる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "職員一人当たり入院患者数は（1日平均在院患者数÷年間平均職員数）で算出され、職員の労働効率を示している。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "売上債権回転日数は医業未収金÷(医業収益÷総資産)で算出される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 売上債権回転日数は医業未収金÷(医業収益÷<del>総資産</del><span class='ins'>暦日数</span>)で算出される。</div><div class='correctline'>正しい文： <span class='insline'>売上債権回転日数は医業未収金÷(医業収益÷暦日数)で算出される。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "医業収益成長率は（（当期医業収益−前期医業収益）÷前期医業収益）×100で算出される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "債務償還年数は（借入金＋リース責務）÷（医業収益÷暦日数）で算出され、この比率が100％を越している場合は、債務超過に陥っていることを示している。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>債務償還年数は（借入金＋リース責務）÷（<del>医業収益÷暦日数</del><span class='ins'>経常利益＋減価償却費</span>）で算出され、この比率が100％を越している場合は、債務超過に陥っていることを示している。</div><div class='correctline'>正しい文： <span class='insline'>債務償還年数は（借入金＋リース責務）÷（経常利益＋減価償却費）で算出され、この比率が100％を越している場合は、債務超過に陥っていることを示している。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "title": "第23問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "独立行政法人における内部統制とは、法令等を遵守しつつ業務を行い、目的を有効かつ効果的に果たすための体制や仕組みのことを指す。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "リスク管理を活用した内部統制の取組みでは、リスクの顕在化防止または顕在化後の損失最小化を図ることを推進している。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "業務監査指導には業務の実施状況や経営管理、医療管理、防災及び安全に関する事項が対象となる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "内部統制の推進体制として、各法人では、内部統制を担当する役員、内部統制推進責任者及び内部統制推進部門を設置することとしており、国立病院機構においては、本部、グループ担当理事部門及び各病院に内部統制委員会を設置し、 内部統制システムを整備している。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>内部統制の推進体制として、各法人では、内部統制を担当する役員、内部統制推進責任者及び内部統制推進部門を設置することとしており、国立病院機構においては、本部、グループ担当理事部門及び各病院に<del>内部統制委員会</del><span class='ins'>内部統制推進責任者</span>を設置し、 内部統制システムを整備している。</div><div class='correctline'>正しい文： <span class='insline'>内部統制の推進体制として、各法人では、内部統制を担当する役員、内部統制推進責任者及び内部統制推進部門を設置することとしており、国立病院機構においては、本部、グループ担当理事部門及び各病院に内部統制推進責任者を設置し、 内部統制システムを整備している。</span></div>"
+      },
+      {
+        "label": "5",
+        "text": "コンプライアンスの推進に当たって、日々の業務活動から職員一人ひとりが着実に取組を実践していくため、職員一人ひとりの活動を基本とし、各職場単位で自主点検を通じ、職場内の法令遵守の実施状況の把握等を行う体制を構築する必要がある。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>コンプライアンスの推進に当たって、日々の業務活動から職員一人ひとりが着実に取組を実践していくため、<del>、職員一人ひとり</del><span class='ins'>職場単位</span>の活動を基本とし、各職場単位で自主点検を通じ、職場内の法令遵守の実施状況の把握等を行う体制を構築する必要がある。</div><div class='correctline'>正しい文： <span class='insline'>コンプライアンスの推進に当たって、日々の業務活動から職員一人ひとりが着実に取組を実践していくため、職場単位の活動を基本とし、各職場単位で自主点検を通じ、職場内の法令遵守の実施状況の把握等を行う体制を構築する必要がある。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "title": "第24問 次の中から正しい文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "診療所とは、患者を入院させるための施設を有しないものかつ１９人以下の患者を入院させるための施設である。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>診療所とは、患者を入院させるための施設を有しないもの<del>かつ</del><span class='ins'>又は</span>１９人以下の患者を入院させるための施設である。</div><div class='correctline'>正しい文： <span class='insline'>診療所とは、患者を入院させるための施設を有しないもの又は１９人以下の患者を入院させるための施設である。</span></div>"
+      },
+      {
+        "label": "2",
+        "text": "病院とは、 20 人以上の患者を入院させるための施設を有し、傷病者が、科学的でかつ正な診療を受けることができる便宜を与えることを主たる目的として組織され、かつ、運営される施設である。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "介護老人保健施設とは、介護保険法の規定による介護老人保健施設であり、要介護者に対し、施設サービス計画に基づいて、看護、医学的管理の下における介護及び機能訓練その他必要な医療を行うとともに、その日常生活上の世話を行うことを目的とする施設である。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "助産所は、妊婦、産婦又はじょく婦１9 人以上の入所施設を有してはならない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>助産所は、妊婦、産婦又はじょく婦<del>１9 人以上</del><span class='ins'>１0 人以上</span>の入所施設を有してはならない。</div><div class='correctline'>正しい文： <span class='insline'>助産所は、妊婦、産婦又はじょく婦１0 人以上の入所施設を有してはならない。</span></div>"
+      },
+      {
+        "label": "5",
+        "text": "病院、診療所、助産所は医師又は歯科医師が、公衆又は特定多数人のため医業又は歯科医業を行う場所である。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>病院、診療所<del>助産所</del>は医師又は歯科医師が、公衆又は特定多数人のため医業又は歯科医業を行う場所である。</div><div class='correctline'>正しい文： <span class='insline'>病院、診療所は医師又は歯科医師が、公衆又は特定多数人のため医業又は歯科医業を行う場所である。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "title": "第25問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "医療計画は基本方針に即して、かつ、地域の実情に応じて、当該都道府県における医療提供体制の確保を図るための計画を定めるものとされている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "都道府県は、5 年ごとに医療計画ついて調査、分析及び評価を行い、必要があると認めるときは医療計画を変更する。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>都道府県は、<del>5 年</del><span class='ins'>6 年</span>ごとに医療計画ついて調査、分析及び評価を行い、必要があると認めるときは医療計画を変更する。</div><div class='correctline'>正しい文： <span class='insline'>都道府県は、6 年ごとに医療計画ついて調査、分析及び評価を行い、必要があると認めるときは医療計画を変更する。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "開設承認事項を変更しようとするときはあらかじめ都道府県知事へ許可申請が必要なものと変更後１4 日以内に都道府県知事へ届出が必要なものがある。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>開設承認事項を変更しようとするときはあらかじめ都道府県知事へ許可申請が必要なものと変更後<del>１4 日以内</del><span class='ins'>10 日以内</span>都道府県知事へ届出が必要なものがある。</div><div class='correctline'>正しい文： <span class='insline'>開設承認事項を変更しようとするときはあらかじめ都道府県知事へ許可申請が必要なものと変更後10 日以内都道府県知事へ届出が必要なものがある。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "病院を開設しようとするときは、都道府県知事の許可を受けなければならない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "医療法人制度は、個人経営でも容易に法人格を取得させ、医業の永続性を確保するとともに、医療の安定的な普及・向上を図るために設けられている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "title": "第26問 病院の開設承認事項を変更しようとするときにあらかじめ都道府県知事へ許可申請が必要な項目で誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "療養病院を有する病院について、浴室の構造設備の概要",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del></del><span class='ins'></span> </div><div class='correctline'>正しい文： <span class='insline'>開設承認事項を変更しようとするときにあらかじめ都道府県知事へ許可申請が必要な項目</span></div>"
+      },
+      {
+        "label": "2",
+        "text": "調剤室の設備の有無及び構造設備の概要",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del></del><span class='ins'></span> </div><div class='correctline'>正しい文： <span class='insline'>開設承認事項を変更しようとするときにあらかじめ都道府県知事へ許可申請が必要な項目</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "敷地の面積及び平面図",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del></del><span class='ins'></span> </div><div class='correctline'>正しい文： <span class='insline'>開設承認事項を変更しようとするときにあらかじめ都道府県知事へ許可申請が必要な項目</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "敷地周囲の見取り図",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'><del> </del><span class='ins'></span> </div><div class='correctline'>正しい文： <span class='insline'>特になし </span></div>"
+      },
+      {
+        "label": "5",
+        "text": "開設者の住所及び氏名",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'><del> </del><span class='ins'></span> </div><div class='correctline'>正しい文： <span class='insline'>変更後１０日以内に都道府県知事へ届出が必要なもの </span></div>"
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "title": "第27問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "医師の法定人員は、入院患者と外来患者を用いて算出される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "薬剤師の法定人員は、入院患者と外来患者を用いて算出される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>薬剤師の法定人員は、入院患者と<del> 外来患者</del><span class='ins'>外来患者に係る取扱処方せん数</span>を用いて算出される。 </div><div class='correctline'>正しい文： <span class='insline'>薬剤師の法定人員は、入院患者と外来患者に係る取扱処方せん数を用いて算出される。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "病院の管理者は、その管理する病院に係る患者の状況その他の事項に関する報告書を病院所在地を管轄とする都道府県知事に提出することになっている。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>病院の管理者は、その管理する病院に係る患者の状況その他の事項に関する報告書を病院所在地を管轄とする<del> 都道府県知事</del><span class='ins'>保健所長/span>に提出することになっている。</div><div class='correctline'>正しい文： <span class='insline'>病院の管理者は、その管理する病院に係る患者の状況その他の事項に関する報告書を病院所在地を管轄とする保健所長に提出することになっている。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "栄養士の法定人員は、病床数100床以上の病院に1名配置することが義務付けられている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "管理者は、管理者の氏名、診療に従事する医師または歯科医師の氏名、診療日及び診療時間、建物の内部に関する案内を病院の入口、受付または待合所の付近の見やすい場所に掲示しなければならない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "title": "第28問 医療保険制度について誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "被用者保険は、全国健康保険協会管掌健康保険、組合管掌健康保険、船員保険、国家公務員等共済組合、地方公務員等共済組合、私立学校教職員共済組合等で構成されている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "国民健康保険法は、自営業者、農業専業者等の被用者保険に加入していない者を主たる対象として成立した地域保険としての国民健康保険組合と同種の事業、業務に従事する者で組織された国民健康保険に分かれる。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>国民健康保険法は、自営業者、農業専業者等の被用者保険に加入していない者を主たる対象として成立した地域保険としての<del> 国民健康保険組合</del><span class='ins'>国民健康保険/span>と同種の事業、業務に従事する者で組織された<del> 国民健康保険</del><span class='ins'>国民健康保険組合</span> に分かれる。</div><div class='correctline'>正しい文： <span class='insline'>国民健康保険法は、自営業者、農業専業者等の被用者保険に加入していない者を主たる対象として成立した地域保険としての国民健康保険と同種の事業、業務に従事する者で組織された国民健康保険組合に分かれる。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "後期高齢者医療制度による医療の対象者は、７５歳以上の者及び６0歳以上７５歳未満で後期高齢者医療広域連合（以下「広域連合」）により一定の障害状態にあると認定された者である。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>後期高齢者医療制度による医療の対象者は、７５歳以上の者及び<del> ６0歳</del><span class='ins'>６5歳</span>以上７５歳未満で後期高齢者医療広域連合（以下「広域連合」）により一定の障害状態にあると認定された者である。</div><div class='correctline'>正しい文： <span class='insline'>後期高齢者医療制度による医療の対象者は、７５歳以上の者及び６5歳以上７５歳未満で後期高齢者医療広域連合（以下「広域連合」）により一定の障害状態にあると認定された者である。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "後期高齢者医療制度は、医療給付費の５割を公費で、４割を６４歳以下の現役世代の加入する医療保険で負担し、残りの１割を高齢者の保険料で負担する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "公費負担医療制度には、法律によって行われるものと、予算的措置によって行われるものとがある。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "title": "第29問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "「労働者災害補償保険法」は、業務上の事由又は通勤による労働者の負傷、疾病、障害、死亡に対し、必要な保険給付を行う。なお、国家公務員の公務上の災害に対する補償については、これとは別に国家公務員災害補償法がある。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "「原子爆弾被爆者に対する援護に関する法律」は、広島市および長崎市で原爆被爆を受け、都道府県知事から被爆者健康手帳の交付を受けた者に対し、公費負担で健康診断や指定医療機関による必要な医療の給付を行うことを定めている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "「戦傷病者特別援護法」は、軍人・軍属であった者が公務に起因する傷病により、厚生労働大臣から 戦傷病者手帳の交付を受け、さらに都道府県知事から療養券の交付を受けて指定医療機関に提出した場合、療養の給付または更生医療の給付を受けることができる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "「介護保険制度」は、加齢による心身の変化に起因して要介護状態になった要介護者が、尊厳を保って日常生活を営むための、保健・医療・福祉サービスを給付するための、国民の共同連帯の理念に基づき、要介護者を社会全体で支える新たな仕組みとして平成１7年４月より導入された。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>「介護保険制度」は、加齢による心身の変化に起因して要介護状態になった要介護者が、尊厳を保って日常生活を営むための、保健・医療・福祉サービスを給付するための、国民の共同連帯の理念に基づき、要介護者を社会全体で支える新たな仕組みとして<del> 平成１7年４月</del><span class='ins'>平成１2年４月</span> より導入された。</div><div class='correctline'>正しい文： <span class='insline'>「介護保険制度」は、加齢による心身の変化に起因して要介護状態になった要介護者が、尊厳を保って日常生活を営むための、保健・医療・福祉サービスを給付するための、国民の共同連帯の理念に基づき、要介護者を社会全体で支える新たな仕組みとして平成１2年４月より導入された。</span></div>"
+      },
+      {
+        "label": "5",
+        "text": "「公害健康被害の補償等に関する法律」は、大気汚染、または水質の汚濁の影響による健康被害に対する補償として療養の給付、障害補償費などの給付を行うものであり、厚生労働大臣から公害医療手帳を交付された公害認定患者に対してのみ実施される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>「公害健康被害の補償等に関する法律」は、大気汚染、または水質の汚濁の影響による健康被害に対する補償として療養の給付、障害補償費などの給付を行うものであり、<del> 厚生労働大臣</del><span class='ins'>都道府県知事（または政令市長）</span> から公害医療手帳を交付された公害認定患者に対してのみ実施される。</div><div class='correctline'>正しい文： <span class='insline'>「公害健康被害の補償等に関する法律」は、大気汚染、または水質の汚濁の影響による健康被害に対する補償として療養の給付、障害補償費などの給付を行うものであり、都道府県知事（または政令市長）から公害医療手帳を交付された公害認定患者に対してのみ実施される。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "title": "第30問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "保険診療を行うためには、病院・診療所が保険医療を行う機関として地方厚生局長から指定を受け、さらに医師が保険医として登録されていなければならない。これを二重指定制という。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "健康保険法で指定された病院等を「保険医療機関」といい、登録された医師を「保険医」という。保険医療機関、保険医の指定を受けると、特に手続をしなくても、その他の医療保険の保険診療ができることとなっている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "治験対象の薬物を使用する場合、厚生労働大臣の定める「薬価基準」に収載されている医薬品以外の薬物を患者に使用してはならない。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>治験対象の薬物を使用する場合、<del>厚生労働大臣の定める「薬価基準」に収載されている医薬品以外の薬物を患者に使用してはならない。</del><span class='ins'>その他厚生労働大臣が定める場合においてはこの限りでない。</span> </div><div class='correctline'>正しい文： <span class='insline'>治験対象の薬物を使用する場合、その他厚生労働大臣が定める場合においてはこの限りでない。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "療養担当規則には、保険医療機関が保険診療を行うにあたっての療養担当を定めたものと、保険医が保険診療を行う際の治療方針等を定めたものに大別できる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "投薬量は、予見することができる必要期間に従ったものでなければならないこととし、厚生労働大臣が定める内服薬及び外用薬については当該厚生労働大臣が定める内服薬及び外用薬ごとに１回１４日分、３０日分又は6０日分を限度とする。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>投薬量は、予見することができる必要期間に従ったものでなければならないこととし、厚生労働大臣が定める内服薬及び外用薬については当該厚生労働大臣が定める内服薬及び外用薬ごとに１回１４日分、３０日分又は<del>6０日分</del><span class='ins'>9０日分</span> を限度とする。</div><div class='correctline'>正しい文： <span class='insline'>投薬量は、予見することができる必要期間に従ったものでなければならないこととし、厚生労働大臣が定める内服薬及び外用薬については当該厚生労働大臣が定める内服薬及び外用薬ごとに１回１４日分、３０日分又は9０日分を限度とする。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "title": "第31問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "診療報酬とは、保険医が、保険医療機関において保険診療を行った場合に、その診療行為に対して支払われる対価のことである。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "診療報酬は、「健康保険法の規定による療養に要する費用の額の算定方法」により診療行為ごとに点数が定められており、厳正な解釈のもとに運用されている。点数表に定めのない診療行為については、厚生労働省保険局に協議しなければならず、勝手な解釈によることは許されない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "国保連合会は、各都道府県に支部を置き、また、支払基金は各都道府県に独立した機関として設置されている。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del>国保連合会</del><span class='ins'>支払基金</span> は、各都道府県に支部を置き、また、<del>支払基金 </del><span class='ins'>国保連合会</span> は各都道府県に独立した機関として設置されている。</div><div class='correctline'>正しい文： <span class='insline'>支払基金は、各都道府県に支部を置き、また、国保連合会は各都道府県に独立した機関として設置されている。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "保険医療機関は他府県の被保険者の診療報酬もその保険医療機関の所在地の支払基金等に請求する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "国保連合会には、健康保険等の職域保険、健康保険等と公費の併用、公費単独負担の医療費等の診療報酬を請求し、支払基金には、国民健康保険、国民健康保険と公費の併用、後期高齢者医療制度の診療報酬を請求する。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del>国保連合会</del><span class='ins'>支払基金</span> には、健康保険等の職域保険、健康保険等と公費の併用、公費単独負担の医療費等の診療報酬を請求し、<del>支払基金 </del><span class='ins'>国保連合会</span> には、国民健康保険、国民健康保険と公費の併用、後期高齢者医療制度の診療報酬を請求する。</div><div class='correctline'>正しい文： <span class='insline'>支払基金には、健康保険等の職域保険、健康保険等と公費の併用、公費単独負担の医療費等の診療報酬を請求し、国保連合会には、国民健康保険、国民健康保険と公費の併用、後期高齢者医療制度の診療報酬を請求する。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "title": "第32問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "薬剤師以外の者が、販売又は授与の目的で調剤してはならない。ただし、医師、歯科医師または獣医師が自己の処方せんにより自ら調剤するときは、この限りでない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "処方せん中に疑わしい点があるときは、処方せんを交付した医師等に問い合せて、確かめた後でなければ、調剤してはならない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "調剤したときは、処方せんに、患者の氏名、用法、用量、調剤年月日、調剤した薬剤師の氏名、病院の名称及び所在地を記載しなければならない。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 調剤したときは、<del>処方せん</del><span class='ins'>調剤した薬剤の容器及び被包</span> に、患者の氏名、用法、用量、調剤年月日、調剤した薬剤師の氏名、病院の名称及び所在地を記載しなければならない。</div><div class='correctline'>正しい文： <span class='insline'>調剤したときは、調剤した薬剤の容器及び被包に、患者の氏名、用法、用量、調剤年月日、調剤した薬剤師の氏名、病院の名称及び所在地を記載しなければならない。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "調剤した薬剤の適正な使用のため、患者又はその看護に当たっている者に対し、必要な情報を提供し、必要な薬学的知見に基づく指導を行わなければならない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "調剤したときは、調剤した薬剤の容器及び被包に調剤済みの旨（その調剤によって調剤済みとならなかったときは、調剤量）、調剤年月日、病院の名称・所在地、医師等の同意を得て記載された医薬品を変更して調剤した場合には、その変更内容、医師等に疑わしい点を確かめた場合には、その回答を記入し、記名押印し、又は署名しなければならない。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 調剤したときは、<del>調剤した薬剤の容器及び被包</del><span class='ins'>処方せん</span> に調剤済みの旨（その調剤によって調剤済みとならなかったときは、調剤量）、調剤年月日、病院の名称・所在地、医師等の同意を得て記載された医薬品を変更して調剤した場合には、その変更内容、医師等に疑わしい点を確かめた場合には、その回答を記入し、記名押印し、又は署名しなければならない。</div><div class='correctline'>正しい文： <span class='insline'>調剤したときは、処方せんに調剤済みの旨（その調剤によって調剤済みとならなかったときは、調剤量）、調剤年月日、病院の名称・所在地、医師等の同意を得て記載された医薬品を変更して調剤した場合には、その変更内容、医師等に疑わしい点を確かめた場合には、その回答を記入し、記名押印し、又は署名しなければならない。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "title": "第33問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "作業療法士は、厚生労働大臣の免許を持ち、医師の指示の下に、身体に障害のある者に治療体操などの運動を行わせたり、電気刺激、マッサージ、温熱などの物理的手段を加えたりして、主にその基本的運動能力の回復を図ることを業務内容とする。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del>作業療法士</del><span class='ins'>理学療法士</span> は、厚生労働大臣の免許を持ち、医師の指示の下に、身体に障害のある者に治療体操などの運動を行わせたり、電気刺激、マッサージ、温熱などの物理的手段を加えたりして、主にその基本的運動能力の回復を図ることを業務内容とする。</div><div class='correctline'>正しい文： <span class='insline'>理学療法士は、厚生労働大臣の免許を持ち、医師の指示の下に、身体に障害のある者に治療体操などの運動を行わせたり、電気刺激、マッサージ、温熱などの物理的手段を加えたりして、主にその基本的運動能力の回復を図ることを業務内容とする。</span></div>"
+      },
+      {
+        "label": "2",
+        "text": "理学療法士は、厚生労働大臣の免許を持ち、身体または精神に障害のある者に、手芸工作その他の作業を行わせ、主としてその応用的動作能力や社会的適応能力の回復を図ることを業務内容とする。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del>理学療法士</del><span class='ins'>作業療法士</span> は、厚生労働大臣の免許を持ち、身体または精神に障害のある者に、手芸工作その他の作業を行わせ、主としてその応用的動作能力や社会的適応能力の回復を図ることを業務内容とする。</div><div class='correctline'>正しい文： <span class='insline'>作業療法士は、厚生労働大臣の免許を持ち、身体または精神に障害のある者に、手芸工作その他の作業を行わせ、主としてその応用的動作能力や社会的適応能力の回復を図ることを業務内容とする。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "臨床工学技士は、厚生労働大臣の免許を持ち、医師の指示の下に、生命維持管理装置の操作及び保守点検を行うことを業務内容とする。生命維持管理装置とは、人の呼吸、循環または代謝の機能の一部を代替し、または補助することが目的とされている装置をいう。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "歯科衛生士は、厚生労働大臣の免許を持ち、歯牙及び口くうの疾患の予防のため歯科医師の直接の指導の下に行う歯石等の除去及びフッ素等薬物の塗布並びに歯科診療の補助並びに歯科衛生士の名称を用いて歯科保健指導を行うことを業務内容とする。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "救急救命士は、厚生労働大臣の免許を持ち、救急救命士の名称を用いて、医師の指示の下に、原則として救急用自動車等の車内において、救急救命処置を行うことを業務内容とする。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "title": "第34問 医療事故と法的責任として誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "訴訟とは、示談、調停とも不成立になると、民事訴訟が起こされる。訴訟で損害賠償請求する      \n   法律である。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "免許を取得している医療従事者が罰金以上の刑に処せられた場合、倫理の観点からその適正等を問い、法により免許の取り消し、あるいは業務の一時停止という行政上の責任が問われる。この処分は、任命権者が命ずる。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>免許を取得している医療従事者が罰金以上の刑に処せられた場合、倫理の観点からその適正等を問い、法により免許の取り消し、あるいは業務の一時停止という行政上の責任が問われる。この処分は、<del>任命権者</del><span class='ins'>厚生労働大臣</span>が命ずる。 </div><div class='correctline'>正しい文： <span class='insline'>免許を取得している医療従事者が罰金以上の刑に処せられた場合、倫理の観点からその適正等を問い、法により免許の取り消し、あるいは業務の一時停止という行政上の責任が問われる。この処分は、厚生労働大臣が命ずる。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "示談とは、当事者間でお互いに話し合って、紛争を解決するもので、民法上では調停という。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>示談とは、当事者間でお互いに話し合って、紛争を解決するもので、民法上では<del>調停</del><span class='ins'>和解</span>という。</div><div class='correctline'>正しい文： <span class='insline'>示談とは、当事者間でお互いに話し合って、紛争を解決するもので、民法上では和解という。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "医療事故で問われる刑事上の責任は、業務上過失致死傷罪である。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "調停とは、示談が不成立の場合、または初めから示談の成立の可能性がないときに、簡易裁判所に調停を申し立て、公平な調停委員を中に入れて解決することをいう。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "title": "第35問 患者影響レベルについて正しい文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "影響レベル2までが「ヒヤリ・ハット事例（＝インシデント事例）」、レベル3a以上が「医療事故」とする。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>影響レベル<del>2</del><span class='ins'>３ａ</span>までが「ヒヤリ・ハット事例（＝インシデント事例）」、レベル<del>3a </del><span class='ins'>３ｂ</span> 以上が「医療事故」とする。</div><div class='correctline'>正しい文： <span class='insline'>影響レベル３ａまでが「ヒヤリ・ハット事例（＝インシデント事例）」、レベル３ｂ以上が「医療事故」とする。</span></div>"
+      },
+      {
+        "label": "2",
+        "text": "レベル２は行った医療又は管理により、患者に影響を与えた、又は何らかの影響を与えた可能性がある場合で、障害の程度及び〔継続性〕は軽度〔一過性〕である。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>レベル２は行った医療又は管理により、患者に影響を与えた、又は何らかの影響を与えた可能性がある場合で、障害の程度及び〔継続性〕は軽度<del>〔一過性〕</del><span class='ins'>なし</span>である。</div><div class='correctline'>正しい文： <span class='insline'>レベル２は行った医療又は管理により、患者に影響を与えた、又は何らかの影響を与えた可能性がある場合で、障害の程度及び〔継続性〕は軽度なしである。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "レベル３bは行った医療又は管理により、本来必要でなかった治療や処置が必要となった場合で、障害の程度及び〔継続性〕は中・高度〔一過性〕である。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "レベル４は行った医療又は管理により、生活に影響する重大な永続的障害が発生した可能性がある場合で、障害の程度及び〔継続性〕は高度〔死亡〕である。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>レベル４は行った医療又は管理により、生活に影響する重大な永続的障害が発生した可能性がある場合で、障害の程度及び〔継続性〕は高度<del>〔死亡〕</del><span class='ins'>〔永続的〕</span>である。</div><div class='correctline'>正しい文： <span class='insline'>レベル４は行った医療又は管理により、生活に影響する重大な永続的障害が発生した可能性がある場合で、障害の程度及び〔継続性〕は高度〔永続的〕である。</span></div>"
+      },
+      {
+        "label": "5",
+        "text": "レベル１は誤った行為を患者に実施したが、結果として患者に影響を及ぼすに至らなかった場合で、障害の程度及び〔継続性〕はなしである。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 36,
+    "title": "第36問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "医薬品安全管理責任者は、院長の指名により選任され、医薬品の安全使用を確保するための業務を行う責任者をいう。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "医療安全管理委員会の委員長は、原則として副院長、副委員長は、原則として医療安全管理者及び診療部長とする。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "医療安全管理者は、医療安全に関する十分な知識を有する者とする（医療安全管理者の養成を目的とした研修で、通算して４0時間以上の研修を終了した者）。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "医療安全管理者は、院長の指名により選任され、医療安全推進担当者を指導し、連携・協同の上、特定の部門ではなく病院全般にかかる医療安全対策の立案・実行・評価を含め、医療安全管理のための組織横断的な活動を行う者をいい、副院長をもって充てるものとする。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'>医療安全管理者は、院長の指名により選任され、医療安全推進担当者を指導し、連携・協同の上、特定の部門ではなく病院全般にかかる医療安全対策の立案・実行・評価を含め、医療安全管理のための組織横断的な活動を行う者をいい、<del>副院長</del><span class='ins'>看護師長</span>をもって充てるものとする。</div><div class='correctline'>正しい文： <span class='insline'>医療安全管理者は、院長の指名により選任され、医療安全推進担当者を指導し、連携・協同の上、特定の部門ではなく病院全般にかかる医療安全対策の立案・実行・評価を含め、医療安全管理のための組織横断的な活動を行う者をいい、看護師長をもって充てるものとする。</span></div>"
+      },
+      {
+        "label": "5",
+        "text": "医療事故調査制度に該当する事案であって、かつ、院内の医療安全管理委員会で、原因等について十分な結論づけができない場合等には、院長は、第三者的立場から検証を行うため、グループ担当者及び専門医又は看護師等の外部委員を参画させた拡大医療安全検討委員会を開催する。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del>医療事故調査制度に該当する事案</del><span class='ins'>医療事故調査制度に該当しない事案</span>であって、かつ、院内の医療安全管理委員会で、原因等について十分な結論づけができない場合等には、院長は、第三者的立場から検証を行うため、グループ担当者及び専門医又は看護師等の外部委員を参画させた拡大医療安全検討委員会を開催する。</div><div class='correctline'>正しい文： <span class='insline'>医療事故調査制度に該当しない事案であって、かつ、院内の医療安全管理委員会で、原因等について十分な結論づけができない場合等には、院長は、第三者的立場から検証を行うため、グループ担当者及び専門医又は看護師等の外部委員を参画させた拡大医療安全検討委員会を開催する。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "title": "第37問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "外来患者数とは、０時から２４時までに新来、再来、往診を問わず、受け付けた患者数である。外来の同一患者が２以上の診療科で診療を受けた場合は、それぞれの診療科の外来患者数とする。また、ある診療科の在院患者が、他の診療科において外来診療を受診した場合も、その診療科の外来患者とする。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "１日平均在院患者数とは在院患者延数を暦日数で除した数である。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "在院患者数とは、２４時現在に在院していた患者数（外泊患者を含む）であり、０時過ぎに入院し、当日の２４時前に退院（死亡を含む）した者も在院患者数に算入される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 在院患者数とは、２４時現在に在院していた患者数（外泊患者を含む）であり、０時過ぎに入院し、当日の２４時前に退院（死亡を含む）した者も在院患者数に<del>算入される。</del><span class='ins'>算入しない。</span></div><div class='correctline'>正しい文： <span class='insline'>在院患者数とは、２４時現在に在院していた患者数（外泊患者を含む）であり、０時過ぎに入院し、当日の２４時前に退院（死亡を含む）した者も在院患者数に算入しない。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "病床利用率は（1日平均在患者数÷病床数）×100で算出される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "平均在院日数は 在院患者延数÷（新入院患者＋退院患者数）で算出される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 平均在院日数は（在院患者延数÷（新入院患者＋退院患者数）<span class='ins'>÷2</span>）で算出される。</div><div class='correctline'>正しい文： <span class='insline'>平均在院日数は（在院患者延数÷（新入院患者＋退院患者数）÷2）で算出される。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 38,
+    "title": "第38問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "病床回転数は（暦日数÷平均在院日数）で算出される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "医療機器使用効率は（Ｂ・Ｃ・Ｄ類実診療額÷医療機器保有額（５０万円以上））×100で\n算出される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "薬品比率は（薬品消費額（A類）÷実診療総額）×100で算出される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "在院患者1人1日当たり診療点数は（診療点数÷１日平均在院患者数）で算出される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 在院患者1人1日当たり診療点数は（診療点数÷<del> １日平均在院患者数</del><span class='ins'>在院患者延数</span>）で算出される。</div><div class='correctline'>正しい文： <span class='insline'>在院患者1人1日当たり診療点数は（診療点数÷在院患者延数）で算出される。</span></div>"
+      },
+      {
+        "label": "5",
+        "text": "平均通院回数は（新外来患者数÷外来患者延数）で算出される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 平均通院回数は（<del> 新</del>外来患者数÷<span class='ins'>新</span>外来患者延数）で算出される。</div><div class='correctline'>正しい文： <span class='insline'>平均通院回数は（外来患者数÷新外来患者延数）で算出される。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 39,
+    "title": "第39問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "部下に対してどのような研修が必要か、という「研修ニーズ」は監督者が一番よく把握できる立場にあるため、監督者は部下に期待する能力の水準や実際の能力等を留意し部下に対して適切な研修を受講させるように心掛ける必要がある。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "職場研修とは、職場の監督者が本来の業務を通じて、または、業務に関連させつつ部下を指導する形で行われるものである。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 職場研修とは、職場の<del>監督者</del> <span class='ins'>上司</span>が本来の業務を通じて、または、業務に関連させつつ部下を指導する形で行われるものである。</div><div class='correctline'>正しい文： <span class='insline'>職場研修とは、職場の上司が本来の業務を通じて、または、業務に関連させつつ部下を指導する形で行われるものである。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "職場研修は、①研修ニーズと指導目標の明確化、②指導の具体的な方法の決定、③研修の実施、④事後の評価を意図的、計画的に行わなければならない。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "職員が本来行うこととされている業務から離れて、職務の一環として行われるものを、「職場研修」に対して「職場外研修」といい、例えば、新規採用者研修や中堅職員研修等をいう。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "「職場研修」と「職場外研修」の関係としては、「職場研修」において原則的体系的な知識や技能を習得させ、それを職場で実践させつつ「職場外研修」で原則の弾力的な応用を指導する、というように両社は補完関係にある。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 「職場研修」と「職場外研修」の関係としては、<del>「職場研修」</del> <span class='ins'>「職場外研修」</span>において原則的体系的な知識や技能を習得させ、それを職場で実践させつつ<del>「職場外研修」 </del><span class='ins'>「職場研修」</span> で原則の弾力的な応用を指導する、というように両社は補完関係にある。</div><div class='correctline'>正しい文： <span class='insline'>「職場研修」と「職場外研修」の関係としては、「職場外研修」において原則的体系的な知識や技能を習得させ、それを職場で実践させつつ「職場研修」で原則の弾力的な応用を指導する、というように両社は補完関係にある。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 40,
+    "title": "第40問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "リーダーシップの定義は「集団の目標や課題を達成するために、その集団内の一部の人がほかの人に影響を及ぼす現象」とされている。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "指示型はリーダーが自分に権限を集中して、部下に一方的に指示して業務させる型である。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "関与型はリーダーが業務の遂行について部下に相談し、関与させて業務をさせる型である。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del>関与型</del> <span class='ins'>参加型</span>はリーダーが業務の遂行について部下に相談し、関与させて業務をさせる型である。</div><div class='correctline'>正しい文： <span class='insline'>参加型はリーダーが業務の遂行について部下に相談し、関与させて業務をさせる型である。 </span></div>"
+      },
+      {
+        "label": "4",
+        "text": "委任型はリーダーが部下に権限を譲渡して、部下の判断で業務させる型である。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "下の状況との関係だけでいえば、業務遂行能力や意欲が高まるにつれて、部下の自主性を広げることが望ましいことから、一般的には「指示型」から「委任型」へ、さらには「関与型」へと移行していく方法が適切であると考えられる。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 下の状況との関係だけでいえば、業務遂行能力や意欲が高まるにつれて、部下の自主性を広げることが望ましいことから、一般的には「指示型」から<del>「委任型」</del> <span class='ins'>「参加型」</span>へ、さらには<del> 「関与型」</del><span class='ins'>「委任型」</span>へと移行していく方法が適切であると考えられる。</div><div class='correctline'>正しい文： <span class='insline'>下の状況との関係だけでいえば、業務遂行能力や意欲が高まるにつれて、部下の自主性を広げることが望ましいことから、一般的には「指示型」から「参加型」へ、さらには「委任型」へと移行していく方法が適切であると考えられる。 </span></div>"
+      }
+    ]
+  },
+  {
+    "id": 41,
+    "title": "第41問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "画像診断管理加算１の施設基準として、当該保険医療機関内に画像診断を専ら担当する常勤の医師が一名以上配置されていることが求められる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "画像診断管理加算1の施設基準として、当該保険医療機関における核医学診断及びコンピューター断層撮影診断のうち、少なくとも⼋割以上のものの読影結果が、ロに規定する医師により遅くとも撮影日の翌診療日までに主治医に報告されていることが求められる。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del>画像診断管理加算1</del> <span class='ins'>画像診断管理加算2と3と4</span>の施設基準として、当該保険医療機関における核医学診断及びコンピューター断層撮影診断のうち、少なくとも⼋割以上のものの読影結果が、ロに規定する医師により遅くとも撮影日の翌診療日までに主治医に報告されていることが求められる。</div><div class='correctline'>正しい文： <span class='insline'>画像診断管理加算2と3と4の施設基準として、当該保険医療機関における核医学診断及びコンピューター断層撮影診断のうち、少なくとも⼋割以上のものの読影結果が、ロに規定する医師により遅くとも撮影日の翌診療日までに主治医に報告されていることが求められる。 </span></div>"
+      },
+      {
+        "label": "3",
+        "text": "画像診断管理加算2の施設基準として、都道府県が定める救急医療に関する計画に基づいて運営される救命救急センターを有している保険医療機関であることが求められる。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del>画像診断管理加算2</del> <span class='ins'>画像診断管理加算3</span>の施設基準として、都道府県が定める救急医療に関する計画に基づいて運営される救命救急センターを有している保険医療機関であることが求められる。</div><div class='correctline'>正しい文： <span class='insline'>画像診断管理加算3の施設基準として、都道府県が定める救急医療に関する計画に基づいて運営される救命救急センターを有している保険医療機関であることが求められる。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "画像診断管理加算３の施設基準として、当該保険医療機関内に画像診断を専ら担当する常勤の医師が三名以上配置され、当該保険医療機関において、夜間及び休日に読影を行う体制が整備されていることが求められる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "画像診断管理加算４の施設基準として、当該保険医療機関内に画像診断を専ら担当する常勤の医師が六名以上配置されていることが求められる。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "title": "第42問 ２枚の頭部単純デジタルエックス線撮影を行った場合の［診断料］と［撮影料］で正しい組み合わせを１つ選びなさい。ただし、1枚に対する頭部単純デジタルエックス線撮影の［診断料］は85点、［撮影料］は68点とする。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "［診断料］170点 ［撮影料］136点",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "診断料］127.5点 ［撮影料］136点",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "［診断料］128点 ［撮影料］136点",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "［診断料］127.5点 ［撮影料］102点",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "［診断料］128点 ［撮影料］102点",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> <del></del> <span class='ins'> </span></div><div class='correctline'>正しい文： <span class='insline'>［診断料］：85点＋85点×0.5＝127.5点（四捨五入→128点）、［撮影料］：68点＋68点×0.5＝102点</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 43,
+    "title": "第43問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "動脈造影カテーテル法では主要⾎管の分枝⾎管を選択的に造影撮影した場合 1,180点が加算される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 動脈造影カテーテル法では主要⾎管の分枝⾎管を選択的に造影撮影した場合<del>1,180点</del> <span class='ins'> 3,600点</span>が加算される。</div><div class='correctline'>正しい文： <span class='insline'>動脈造影カテーテル法では主要⾎管の分枝⾎管を選択的に造影撮影した場合 3,600点が加算される。</span></div>"
+      },
+      {
+        "label": "2",
+        "text": "頸動脈閉塞試験（マタス試験）を実施した場合は、頸動脈閉塞試験加算として、500 点を所定点数に加算する。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 頸動脈閉塞試験（マタス試験）を実施した場合は、頸動脈閉塞試験加算として、<del>400 点</del> <span class='ins'> 1000 点</span>を所定点数に加算する。</div><div class='correctline'>正しい文： <span class='insline'>頸動脈閉塞試験（マタス試験）を実施した場合は、頸動脈閉塞試験加算として、1000 点を所定点数に加算する。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "⾎流予備能測定検査を実施した場合は、⾎流予備能測定検査加算として、400 点を所定点数に加算される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "静脈造影カテーテル法では3,600 点が加算される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "腔内注入および穿刺注入は、注腸が300点、その他のものが120点加算される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 44,
+    "title": "第44問 シングルホトンエミッションコンピューター断層撮影について、次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "シングルホトンエミッションコンピューター断層撮影を行った場合、（同一のラジオアイソトープを用いた一連の検査につき）1,800 点が加算される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "甲状腺シンチグラム検査に当たって、甲状腺ラジオアイソトープ摂取率を測定した 場合は、甲状腺ラジオアイソトープ摂取率測定加算として、100 点を所定点数に加算する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "新生児、３歳未満の乳幼児（新生児を除 く。）又は３歳以上６歳未満の幼児に対して断層撮影を行った場合は、新生児加算、 乳幼児加算又は幼児加算として、1,600 点、1,000 点又は600 点を所定点数に加算する。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 新生児、３歳未満の乳幼児（新生児を除く。）又は３歳以上６歳未満の幼児に対して断層撮影を行った場合は、新生児加算、 乳幼児加算又は幼児加算として、<del>1,600 点、1,000 点又は600 点を所定点数に加算する。</del> <span class='ins'>所定点数に それぞれ所定点数の100 分の80、100 分の50 又は100 分の30 に相当する点数を加算する。</span></div><div class='correctline'>正しい文： <span class='insline'>新生児、３歳未満の乳幼児（新生児を除く。）又は３歳以上６歳未満の幼児に対して断層撮影を行った場合は、新生児加算、 乳幼児加算又は幼児加算として、所定点数に それぞれ所定点数の100 分の80、100 分の50 又は100 分の30 に相当する点数を加算する。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "ラジオアイソトープの注入手技料は、所定点数に含まれるものとする。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "負荷試験を行った場合は、負荷の種類又は測定回数にかかわらず、断層撮影負荷試 験加算として、所定点数の100 分の80 に相当する点数を加算する。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 負荷試験を行った場合は、負荷の種類又は測定回数にかかわらず、断層撮影負荷試験加算として、所定点数の<del>100 分の80 </del> <span class='ins'>100 分の50</span>に相当する点数を加算する。</div><div class='correctline'>正しい文： <span class='insline'>負荷試験を行った場合は、負荷の種類又は測定回数にかかわらず、断層撮影負荷試験加算として、所定点数の100 分の50に相当する点数を加算する。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 45,
+    "title": "第45問 ポジトロン断層・コンピューター断層複合撮影について、次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "18ＦＤＧを用いた場合（一連の検査につき） 8,625 点が加算される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "18Ｆ標識フルシクロビンを用いた場合（一連の検査につき） 3,625 点が加算される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "アミロイドＰＥＴイメージング剤で放射性医薬品合成設備を用いた場合、14,160 点が加算される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> アミロイドＰＥＴイメージング剤で放射性医薬品合成設備を用いた場合、<del>14,160 点</del> <span class='ins'>13.625点</span>が加算される。</div><div class='correctline'>正しい文： <span class='insline'>アミロイドＰＥＴイメージング剤で放射性医薬品合成設備を用いた場合、13.625点が加算される。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "別に厚生労働大臣が定める施設基準に適合しているものとして地方厚生局長等に届け出た保険医療機関以外の保険医療機関において行われる場合は、所定点数の100 分の80 に相当する点数により算定する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "地方厚生局長等に届け出た保険医療機関において行われる場合、新生児、３歳未満の乳幼児（新生児を除く。）又は３歳以上６歳未満の幼児に対して断層撮影を行った場合は、新生児加算、 乳幼児加算又は幼児加算として、1,280 点、800 点又は480 点を所定点数に加算する。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 地方厚生局長等に届け出た保険医療機関において行われる場合、新生児、３歳未満の乳幼児（新生児を除く。）又は３歳以上６歳未満の幼児に対して断層撮影を行った場合は、新生児加算、 乳幼児加算又は幼児加算として<del>1,280 点、800 点又は480 点</del> <span class='ins'>1,600点、1,000 点又は600 点</span>を所定点数に加算する。</div><div class='correctline'>正しい文： <span class='insline'>地方厚生局長等に届け出た保険医療機関において行われる場合、新生児、３歳未満の乳幼児（新生児を除く。）又は３歳以上６歳未満の幼児に対して断層撮影を行った場合は、新生児加算、 乳幼児加算又は幼児加算として1,600点、1,000 点又は600 点を所定点数に加算する。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 46,
+    "title": "第46問 コンピューター断層撮影（ＣＴ撮影）について、次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "６４列以上のマルチスライス型の機器を使用した場合、共同利用施設において行われる場合、1,000点加算される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> ６４列以上のマルチスライス型の機器を使用した場合、共同利用施設において行われる場合、<del>1,000点</del> <span class='ins'>1,020点</span>加算される。</div><div class='correctline'>正しい文： <span class='insline'>６４列以上のマルチスライス型の機器を使用した場合、共同利用施設において行われる場合、1,020点加算される。</span></div>"
+      },
+      {
+        "label": "2",
+        "text": "１６列以上６４列未満のマルチスライス型の機器による場合 750点、４列以上１６列未満のマルチスライス型の機器による場合 560 点が加算される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> １６列以上６４列未満のマルチスライス型の機器による場合<del> 750点</del> <span class='ins'>900点</span>、４列以上１６列未満のマルチスライス型の機器による場合<del>560 点 </del><span class='ins'>750点</span>が加算される。</div><div class='correctline'>正しい文： <span class='insline'>１６列以上６４列未満のマルチスライス型の機器による場合 900点、４列以上１６列未満のマルチスライス型の機器による場合 750点が加算される。</span></div>"
+      },
+      {
+        "label": "3",
+        "text": "ＣＴ撮影について、別に厚生労働大臣が定める施設基準に適合しているものとして地方厚生局長等に届け出た保険医療機関において、冠動脈のＣＴ撮影を行った場合は、冠動脈ＣＴ撮影加算として、600 点を所定点数に加算する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "ＣＴ撮影について、別に厚生労働大臣が定める施設基準に適合しているものとして地方厚生局長等に届け出た保険医療機関において、全身外傷に対して行った場合には、外傷全身ＣＴ加算として、800 点を所定点数に加算する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "ＣＴ撮影の６４列以上のマルチスライス型の機器又は１６列以上６４列未満のマルチスライス型について、別に厚生労働大臣が定める施設基準を満たす保険医療機関において、大腸のＣＴ撮影（炭酸ガス等の注入を含む。）を行った場合は、大腸ＣＴ撮影加算として、それぞれ620 点又は500 点を所定点数に加算する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 47,
+    "title": "<p>第47問 磁気共鳴コンピューター断層撮影（MRI撮影）について、正しい組み合わせを1つ選びなさい。\n\n<br>
+　　　　　　　　　1　3テスラ以上の機器による場合\n　<br>
+　　　　　　　　　　　　　　イ　共同利用施設において行われる場合【ア】点\n　<br>
+　　　　　　　　　　　　　　　　その他の場合【イ】点\n\n<br>
+　　　　　　　　　2　1.5テスラ以上3テスラ未満の機器による場合【ウ】点\n\n<br>
+　　　　　　　　　3　「1」又は「2」以外の場合【エ】点</p>",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "ア：1,920      イ：1,900      ウ：1,530      エ：1,200",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "ア：1,820      イ：1,700      ウ：1,430      エ：1,000",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "ア：1,620      イ：1,600      ウ：1,330      エ：900",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'><del> </del><span class='ins'></span> </div><div class='correctline'>正しい文： <span class='insline'>これが正解！！ </span></div>"
+      },
+      {
+        "label": "4",
+        "text": "ア：1,520      イ：1,500      ウ：1,230      エ：800",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "ア：1,420      イ：1,400      ウ：1,130      エ：700",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 48,
+    "title": "第48問 磁気共鳴コンピューター断層撮影（ＭＲＩ撮影）について、次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "ＭＲＩ撮影について、別に厚生労働大臣が定める施設基準に適合しているものとして地方厚生局長等に届け出た保険医療機関において、心臓のＭＲＩ撮影を行った場合は、心臓ＭＲＩ撮影加算として、400 点を所定点数に加算する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "ＭＲＩ撮影について、別に厚生労働大臣が定める施設基準に適合しているものとして地方厚生局長等に届け出た保険医療機関において、乳房のＭＲＩ撮影を行った場合は、乳房ＭＲＩ撮影加算として、100 点を所定点数に加算する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "ＭＲＩ撮影について、別に厚生労働大臣の定める施設基準に適合しているものとして地方厚生局長等に届け出た保険医療機関において、１５歳未満の小児に対して、麻酔 を用いて鎮静を行い、１回で複数の領域を一連で撮影した場合は、小児鎮静下ＭＲＩ撮影加算として、当該撮影の所定点数に100 分の80 に相当する点数を加算する。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "4",
+        "text": "ＭＲＩ撮影について、別に厚生労働大臣が定める施設基準に適合しているものとして地方厚生局長等に届け出た保険医療機関において、全身のＭＲＩ撮影を行った場合は、全身ＭＲＩ撮影加算として、800 点を所定点数に加算する。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> ＭＲＩ撮影について、別に厚生労働大臣が定める施設基準に適合しているものとして地方厚生局長等に届け出た保険医療機関において、全身のＭＲＩ撮影を行った場合は、全身ＭＲＩ撮影加算として、<del> 800 点</del> <span class='ins'>600点</span>を所定点数に加算する。</div><div class='correctline'>正しい文： <span class='insline'>ＭＲＩ撮影について、別に厚生労働大臣が定める施設基準に適合しているものとして地方厚生局長等に届け出た保険医療機関において、全身のＭＲＩ撮影を行った場合は、全身ＭＲＩ撮影加算として、600点を所定点数に加算する。</span></div>"
+      },
+      {
+        "label": "5",
+        "text": "ＭＲＩ撮影について、別に厚生労働大臣が定める施設基準に適合しているものとして地方厚生局長等に届け出た保険医療機関において、肝エラストグラフィを行った場合は、肝エラストグラフィ加算として、300 点を所定点数に加算する。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> ＭＲＩ撮影について、別に厚生労働大臣が定める施設基準に適合しているものとして地方厚生局長等に届け出た保険医療機関において、肝エラストグラフィを行った場合は、肝エラストグラフィ加算として、<del> 300 点</del> <span class='ins'>600点</span>を所定点数に加算する。</div><div class='correctline'>正しい文： <span class='insline'>ＭＲＩ撮影について、別に厚生労働大臣が定める施設基準に適合しているものとして地方厚生局長等に届け出た保険医療機関において、肝エラストグラフィを行った場合は、肝エラストグラフィ加算として、600点を所定点数に加算する。</span></div>"
+      }
+    ]
+  },
+  {
+    "id": 49,
+    "title": "第49問 次の中から正しい組み合わせを1つ選びなさい。\n\n1　甲状腺癌に対するもの【ア】点\n2　甲状腺機能亢進症に対するもの【イ】点\n3　固形癌骨転移による疼痛に対するもの【ウ】点\n4　B細胞性非ホジキンリンパ腫に対するもの【エ】点\n5　骨転移のある去勢抵抗性前立腺癌に対するもの【オ】点\n6　神経内分泌腫瘍に対するもの【カ】点\n7　褐色細胞腫に対するもの【キ】点",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "ア：1,190  イ：1,190  ウ：1,600  エ：2,600  オ：2,700  カ：2,620  キ：1,900",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "ア：1,200  イ：1,200  ウ：1,800  エ：2,800  オ：2,400  カ：2,500  キ：1,700",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "ア：1,390  イ：1,390  ウ：1,700  エ：3,000  オ：2,630  カ：2,660  キ：1,820",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'><del> </del><span class='ins'></span> </div><div class='correctline'>正しい文： <span class='insline'>これが正解！！ </span></div>"
+      },
+      {
+        "label": "4",
+        "text": "ア：1,500  イ：1,500  ウ：2,000  エ：3,500  オ：3,000  カ：3,200  キ：2,000",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "ア：1,490  イ：1,490  ウ：1,650  エ：3,200  オ：2,550  カ：2,800  キ：1,780",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      }
+    ]
+  },
+  {
+    "id": 50,
+    "title": "第50問 次の中から誤っている文章を２つ選びなさい。",
+    "instruction": "",
+    "type": "select-incorrect",
+    "options": [
+      {
+        "label": "1",
+        "text": "ガンマナイフによる定位放射線治療を行った場合、50,000 点が加算される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "2",
+        "text": "直線加速器による放射線治療で定位放射線治療の場合、一連につき63,000 点が加算される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "3",
+        "text": "希少な疾病に対して実施した場合で重粒子線治療を行った場合、110,000 点が加算される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> 希少な疾病に対して実施した場合で重粒子線治療を行った場合、<del>110,000 点</del> <span class='ins'>187,500 点</span>が加算される。</div><div class='correctline'>正しい文： <span class='insline'>希少な疾病に対して実施した場合で重粒子線治療を行った場合、187,500 点が加算される。</span></div>"
+      },
+      {
+        "label": "4",
+        "text": "造⾎幹細胞移植を目的とした全身照射を行った場合、30,000 点が加算される。",
+        "correct": false,
+        "explanation": "",
+        "explanation_html": ""
+      },
+      {
+        "label": "5",
+        "text": "ホウ素中性子捕捉療法を行った場合、一連につき110,000 点が加算される。",
+        "correct": true,
+        "explanation": "",
+        "explanation_html": "<div class='diffline'> ホウ素中性子捕捉療法を行った場合、一連につき<del>110,000 点</del> <span class='ins'>187,500 点</span>が加算される。</div><div class='correctline'>正しい文： <span class='insline'>ホウ素中性子捕捉療法を行った場合、一連につき187,500 点が加算される。</span></div>"
+      }
+    ]
+  }
+];
+
+function render() {
+  const app = document.getElementById('app');
+  app.innerHTML = "";
+  DATA.forEach(q => {
+    const card = document.createElement('section');
+    card.className = 'card';
+    const h = document.createElement('div');
+    h.className = 'title';
+    h.textContent = (q.title || '').replace(/\s+/g,' ');
+    const instr = document.createElement('div');
+    instr.className = 'instruction';
+    instr.textContent = q.instruction || (q.type==='select-incorrect' ? '誤っている選択肢をすべて選んでください。' : '正しい選択肢をすべて選んでください。');
+    card.appendChild(h);
+    card.appendChild(instr);
+    const form = document.createElement('div');
+    q.options.forEach((o, i) => {
+      const opt = document.createElement('label');
+      opt.className = 'opt';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.name = `q_{q.id}`;
+      cb.value = i;
+      const span = document.createElement('div');
+      const safeText = (o.text || '').replace(/</g,'&lt;');
+      span.innerHTML = `<strong>${o.label}.</strong> ${safeText}`;
+      opt.appendChild(cb);
+      opt.appendChild(span);
+      form.appendChild(opt);
+    });
+    card.appendChild(form);
+    const controls = document.createElement('div');
+    controls.className = 'controls';
+    const btn = document.createElement('button');
+    btn.textContent = '採点';
+    btn.onclick = () => {
+      const labels = form.querySelectorAll('.opt');
+      q.options.forEach((o, idx) => {
+        const cb = form.querySelector(`input[value="${idx}"]`);
+        const selected = cb.checked;
+        const isCorrect = !!o.correct;
+        labels[idx].classList.remove('correct','incorrect','sel');
+        if(selected){
+          labels[idx].classList.add(isCorrect ? 'correct':'incorrect','sel');
+        }
+        let exp = labels[idx].querySelector('.explain');
+        if(!exp && (isCorrect || selected) && (o.explanation_html || o.explanation)){
+          exp = document.createElement('div');
+          exp.className = 'explain';
+          if(o.explanation_html){
+            exp.innerHTML = o.explanation_html;
+          }else{
+            exp.textContent = o.explanation;
+          }
+          labels[idx].appendChild(exp);
+        }
+      });
+      const exact = q.options.every((o, idx)=>{
+        const selected = form.querySelector(`input[value="${idx}"]`).checked;
+        return (!!o.correct) === selected;
+      });
+      const scoreArea = card.querySelector('.score') || (()=>{const s=document.createElement('div'); s.className='score'; card.appendChild(s); return s;})();
+      scoreArea.textContent = exact ? '✅ 正解！' : '❌ 不正解';
+    };
+    const btnReset = document.createElement('button');
+    btnReset.textContent = 'リセット';
+    btnReset.className = 'secondary';
+    btnReset.onclick = () => {
+      form.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.checked=false);
+      form.querySelectorAll('.opt').forEach(o=>o.classList.remove('correct','incorrect','sel'));
+      form.querySelectorAll('.explain').forEach(e=>e.remove());
+      const s = card.querySelector('.score'); if(s) s.remove();
+    };
+    controls.appendChild(btn);
+    controls.appendChild(btnReset);
+    card.appendChild(controls);
+    app.appendChild(card);
+  });
+  const note = document.createElement('div');
+  note.className = 'footer';
+  note.innerHTML = '※ 自動抽出の都合で一部の肢が欠落・誤判定する可能性があります。原資料に照らして随時修正してください。';
+  app.appendChild(note);
+}
+render();
+</script>
+</body>
+</html>
