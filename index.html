@@ -2221,16 +2221,9 @@ function render() {
     h.innerHTML = (q.title || '').replace(/\n/g,'<br>');
     card.appendChild(h);
 
-    const instr = document.createElement('div');
-    instr.className = 'instruction';
-    instr.textContent = q.instruction || 
-      (q.type==='select-incorrect' 
-        ? '誤っている選択肢をすべて選んでください。'
-        : '正しい選択肢をすべて選んでください。'
-      );
-    card.appendChild(instr);
+    // ★ ← ここで instr（説明文）部分は完全に削除しました
 
-    // ────────────── 選択肢（数字なし） ──────────────
+    // ────────────── 選択肢 ──────────────
     const form = document.createElement('div');
     q.options.forEach((o, i) => {
       const opt = document.createElement('label');
@@ -2244,7 +2237,6 @@ function render() {
       const safeText = (o.text || '')
         .replace(/</g,'&lt;')
         .replace(/\n/g,'<br>');
-      // ▼ 先頭の数字ラベルを削除
       span.innerHTML = `${safeText}`;
 
       opt.appendChild(cb);
@@ -2317,6 +2309,7 @@ function render() {
   app.appendChild(note);
 }
 render();
+
 
 
 </script>
